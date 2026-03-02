@@ -1,0 +1,779 @@
+{
+  "expected_return": 17.65,
+  "volatility": 17.12,
+  "sharpe_ratio": 0.796,
+  "risk_free_rate": 4.02,
+  "num_holdings": 33,
+  "concentration_index": 0.067,
+  "sector_allocation": {
+    "Communication": 6.0,
+    "Consumer": 27.0,
+    "Consumer Staples": 6.0,
+    "Energy": 6.0,
+    "Finance": 6.0,
+    "Healthcare": 19.0,
+    "Industrial": 6.0,
+    "Materials": 6.0,
+    "Real Estate": 6.0,
+    "Technology": 6.0,
+    "Utilities": 6.0
+  },
+  "top_holdings": [
+    {
+      "ticker": "MCD",
+      "weight": 15.0
+    },
+    {
+      "ticker": "JNJ",
+      "weight": 15.0
+    },
+    {
+      "ticker": "ROST",
+      "weight": 10.0
+    },
+    {
+      "ticker": "MU",
+      "weight": 2.0
+    },
+    {
+      "ticker": "NBR",
+      "weight": 2.0
+    },
+    {
+      "ticker": "LRCX",
+      "weight": 2.0
+    },
+    {
+      "ticker": "APA",
+      "weight": 2.0
+    },
+    {
+      "ticker": "DG",
+      "weight": 2.0
+    },
+    {
+      "ticker": "FCX",
+      "weight": 2.0
+    },
+    {
+      "ticker": "AMAT",
+      "weight": 2.0
+    },
+    {
+      "ticker": "ATI",
+      "weight": 2.0
+    },
+    {
+      "ticker": "MS",
+      "weight": 2.0
+    },
+    {
+      "ticker": "FTI",
+      "weight": 2.0
+    },
+    {
+      "ticker": "ES",
+      "weight": 2.0
+    },
+    {
+      "ticker": "GS",
+      "weight": 2.0
+    },
+    {
+      "ticker": "C",
+      "weight": 2.0
+    },
+    {
+      "ticker": "HSY",
+      "weight": 2.0
+    },
+    {
+      "ticker": "CLX",
+      "weight": 2.0
+    },
+    {
+      "ticker": "GOOGL",
+      "weight": 2.0
+    },
+    {
+      "ticker": "EQIX",
+      "weight": 2.0
+    },
+    {
+      "ticker": "GOOG",
+      "weight": 2.0
+    },
+    {
+      "ticker": "BG",
+      "weight": 2.0
+    },
+    {
+      "ticker": "BMY",
+      "weight": 2.0
+    },
+    {
+      "ticker": "MRK",
+      "weight": 2.0
+    },
+    {
+      "ticker": "LMT",
+      "weight": 2.0
+    },
+    {
+      "ticker": "VZ",
+      "weight": 2.0
+    },
+    {
+      "ticker": "ETR",
+      "weight": 2.0
+    },
+    {
+      "ticker": "AME",
+      "weight": 2.0
+    },
+    {
+      "ticker": "HON",
+      "weight": 2.0
+    },
+    {
+      "ticker": "ECL",
+      "weight": 2.0
+    },
+    {
+      "ticker": "CNP",
+      "weight": 2.0
+    },
+    {
+      "ticker": "O",
+      "weight": 2.0
+    },
+    {
+      "ticker": "PLD",
+      "weight": 2.0
+    }
+  ],
+  "stock_details": [
+    {
+      "ticker": "MCD",
+      "weight": 15.0,
+      "expected_return": 18.07,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": -0.5,
+        "growth": 1.56,
+        "valuation_reversion": 6.69,
+        "macro_adjustment": 1.0,
+        "risk_premium": -0.03,
+        "factor_tilt": 0.83
+      },
+      "volatility": 17.0,
+      "composite_score": 70.9,
+      "sector": "Consumer"
+    },
+    {
+      "ticker": "JNJ",
+      "weight": 15.0,
+      "expected_return": 19.8,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 0.2,
+        "growth": 3.03,
+        "valuation_reversion": 6.69,
+        "macro_adjustment": 0.5,
+        "risk_premium": -0.32,
+        "factor_tilt": 1.18
+      },
+      "volatility": 16.4,
+      "composite_score": 79.5,
+      "sector": "Healthcare"
+    },
+    {
+      "ticker": "ROST",
+      "weight": 10.0,
+      "expected_return": 18.56,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": -0.5,
+        "growth": 1.99,
+        "valuation_reversion": 6.59,
+        "macro_adjustment": 1.0,
+        "risk_premium": 0.04,
+        "factor_tilt": 0.91
+      },
+      "volatility": 19.7,
+      "composite_score": 72.8,
+      "sector": "Consumer"
+    },
+    {
+      "ticker": "VZ",
+      "weight": 2.0,
+      "expected_return": 19.13,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": -0.3,
+        "growth": 2.52,
+        "valuation_reversion": 6.69,
+        "macro_adjustment": 0.52,
+        "risk_premium": 0.24,
+        "factor_tilt": 0.95
+      },
+      "volatility": 28.2,
+      "composite_score": 73.7,
+      "sector": "Communication"
+    },
+    {
+      "ticker": "GOOGL",
+      "weight": 2.0,
+      "expected_return": 15.55,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": -0.3,
+        "growth": 1.31,
+        "valuation_reversion": 4.71,
+        "macro_adjustment": 0.5,
+        "risk_premium": 0.23,
+        "factor_tilt": 0.58
+      },
+      "volatility": 27.8,
+      "composite_score": 64.4,
+      "sector": "Communication"
+    },
+    {
+      "ticker": "GOOG",
+      "weight": 2.0,
+      "expected_return": 15.38,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": -0.3,
+        "growth": 1.3,
+        "valuation_reversion": 4.57,
+        "macro_adjustment": 0.5,
+        "risk_premium": 0.22,
+        "factor_tilt": 0.57
+      },
+      "volatility": 27.4,
+      "composite_score": 64.2,
+      "sector": "Communication"
+    },
+    {
+      "ticker": "DG",
+      "weight": 2.0,
+      "expected_return": 18.71,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": -0.5,
+        "growth": 1.96,
+        "valuation_reversion": 6.15,
+        "macro_adjustment": 1.0,
+        "risk_premium": 0.58,
+        "factor_tilt": 1.0
+      },
+      "volatility": 38.9,
+      "composite_score": 75.0,
+      "sector": "Consumer"
+    },
+    {
+      "ticker": "HSY",
+      "weight": 2.0,
+      "expected_return": 14.8,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 1.2,
+        "growth": -2.13,
+        "valuation_reversion": 6.6,
+        "macro_adjustment": 0.0,
+        "risk_premium": -0.12,
+        "factor_tilt": 0.73
+      },
+      "volatility": 28.2,
+      "composite_score": 68.3,
+      "sector": "Consumer Staples"
+    },
+    {
+      "ticker": "BG",
+      "weight": 2.0,
+      "expected_return": 13.26,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 1.2,
+        "growth": -2.21,
+        "valuation_reversion": 5.37,
+        "macro_adjustment": 0.0,
+        "risk_premium": -0.24,
+        "factor_tilt": 0.62
+      },
+      "volatility": 24.1,
+      "composite_score": 65.5,
+      "sector": "Consumer Staples"
+    },
+    {
+      "ticker": "CLX",
+      "weight": 2.0,
+      "expected_return": 12.49,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 1.2,
+        "growth": -2.28,
+        "valuation_reversion": 4.43,
+        "macro_adjustment": 0.0,
+        "risk_premium": -0.22,
+        "factor_tilt": 0.84
+      },
+      "volatility": 24.6,
+      "composite_score": 70.9,
+      "sector": "Consumer Staples"
+    },
+    {
+      "ticker": "NBR",
+      "weight": 2.0,
+      "expected_return": 16.05,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 1.7,
+        "growth": -2.71,
+        "valuation_reversion": 6.01,
+        "macro_adjustment": 0.58,
+        "risk_premium": 1.22,
+        "factor_tilt": 0.73
+      },
+      "volatility": 58.3,
+      "composite_score": 68.2,
+      "sector": "Energy"
+    },
+    {
+      "ticker": "FTI",
+      "weight": 2.0,
+      "expected_return": 15.15,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 1.7,
+        "growth": -2.89,
+        "valuation_reversion": 6.14,
+        "macro_adjustment": 0.5,
+        "risk_premium": 0.42,
+        "factor_tilt": 0.76
+      },
+      "volatility": 29.9,
+      "composite_score": 69.0,
+      "sector": "Energy"
+    },
+    {
+      "ticker": "APA",
+      "weight": 2.0,
+      "expected_return": 15.65,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 1.7,
+        "growth": -3.19,
+        "valuation_reversion": 6.64,
+        "macro_adjustment": 0.5,
+        "risk_premium": 0.84,
+        "factor_tilt": 0.64
+      },
+      "volatility": 44.6,
+      "composite_score": 66.1,
+      "sector": "Energy"
+    },
+    {
+      "ticker": "C",
+      "weight": 2.0,
+      "expected_return": 17.9,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 0.7,
+        "growth": 0.29,
+        "valuation_reversion": 6.69,
+        "macro_adjustment": 0.5,
+        "risk_premium": 0.43,
+        "factor_tilt": 0.78
+      },
+      "volatility": 31.8,
+      "composite_score": 69.4,
+      "sector": "Finance"
+    },
+    {
+      "ticker": "GS",
+      "weight": 2.0,
+      "expected_return": 16.98,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 0.7,
+        "growth": 0.19,
+        "valuation_reversion": 5.77,
+        "macro_adjustment": 0.5,
+        "risk_premium": 0.42,
+        "factor_tilt": 0.89
+      },
+      "volatility": 31.3,
+      "composite_score": 72.2,
+      "sector": "Finance"
+    },
+    {
+      "ticker": "MS",
+      "weight": 2.0,
+      "expected_return": 14.75,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 0.7,
+        "growth": 0.07,
+        "valuation_reversion": 3.94,
+        "macro_adjustment": 0.5,
+        "risk_premium": 0.37,
+        "factor_tilt": 0.65
+      },
+      "volatility": 29.6,
+      "composite_score": 66.1,
+      "sector": "Finance"
+    },
+    {
+      "ticker": "MRK",
+      "weight": 2.0,
+      "expected_return": 19.53,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 0.2,
+        "growth": 3.22,
+        "valuation_reversion": 6.12,
+        "macro_adjustment": 0.5,
+        "risk_premium": -0.04,
+        "factor_tilt": 1.0
+      },
+      "volatility": 26.4,
+      "composite_score": 75.0,
+      "sector": "Healthcare"
+    },
+    {
+      "ticker": "BMY",
+      "weight": 2.0,
+      "expected_return": 19.84,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 0.2,
+        "growth": 3.25,
+        "valuation_reversion": 6.42,
+        "macro_adjustment": 0.5,
+        "risk_premium": 0.02,
+        "factor_tilt": 0.94
+      },
+      "volatility": 28.3,
+      "composite_score": 73.5,
+      "sector": "Healthcare"
+    },
+    {
+      "ticker": "LMT",
+      "weight": 2.0,
+      "expected_return": 18.63,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 0.2,
+        "growth": 1.19,
+        "valuation_reversion": 6.44,
+        "macro_adjustment": 1.0,
+        "risk_premium": 0.23,
+        "factor_tilt": 1.05
+      },
+      "volatility": 28.0,
+      "composite_score": 76.3,
+      "sector": "Industrial"
+    },
+    {
+      "ticker": "HON",
+      "weight": 2.0,
+      "expected_return": 17.93,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 0.2,
+        "growth": 0.74,
+        "valuation_reversion": 6.69,
+        "macro_adjustment": 1.0,
+        "risk_premium": 0.09,
+        "factor_tilt": 0.7
+      },
+      "volatility": 22.9,
+      "composite_score": 67.6,
+      "sector": "Industrial"
+    },
+    {
+      "ticker": "AME",
+      "weight": 2.0,
+      "expected_return": 17.69,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 0.2,
+        "growth": 0.72,
+        "valuation_reversion": 6.51,
+        "macro_adjustment": 1.0,
+        "risk_premium": 0.06,
+        "factor_tilt": 0.67
+      },
+      "volatility": 22.0,
+      "composite_score": 66.9,
+      "sector": "Industrial"
+    },
+    {
+      "ticker": "ATI",
+      "weight": 2.0,
+      "expected_return": 16.83,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 0.5,
+        "growth": -0.59,
+        "valuation_reversion": 6.58,
+        "macro_adjustment": 0.5,
+        "risk_premium": 0.44,
+        "factor_tilt": 0.89
+      },
+      "volatility": 33.6,
+      "composite_score": 72.4,
+      "sector": "Materials"
+    },
+    {
+      "ticker": "ECL",
+      "weight": 2.0,
+      "expected_return": 15.77,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 0.5,
+        "growth": -1.63,
+        "valuation_reversion": 6.69,
+        "macro_adjustment": 0.5,
+        "risk_premium": 0.06,
+        "factor_tilt": 1.13
+      },
+      "volatility": 20.1,
+      "composite_score": 78.3,
+      "sector": "Materials"
+    },
+    {
+      "ticker": "FCX",
+      "weight": 2.0,
+      "expected_return": 15.79,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 0.5,
+        "growth": -0.83,
+        "valuation_reversion": 5.86,
+        "macro_adjustment": 0.5,
+        "risk_premium": 0.62,
+        "factor_tilt": 0.63
+      },
+      "volatility": 40.1,
+      "composite_score": 65.7,
+      "sector": "Materials"
+    },
+    {
+      "ticker": "PLD",
+      "weight": 2.0,
+      "expected_return": 16.1,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 2.2,
+        "growth": -2.39,
+        "valuation_reversion": 6.44,
+        "macro_adjustment": 0.5,
+        "risk_premium": -0.23,
+        "factor_tilt": 1.05
+      },
+      "volatility": 18.0,
+      "composite_score": 76.3,
+      "sector": "Real Estate"
+    },
+    {
+      "ticker": "EQIX",
+      "weight": 2.0,
+      "expected_return": 16.38,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 2.2,
+        "growth": -1.53,
+        "valuation_reversion": 5.54,
+        "macro_adjustment": 0.86,
+        "risk_premium": 0.08,
+        "factor_tilt": 0.71
+      },
+      "volatility": 29.0,
+      "composite_score": 67.9,
+      "sector": "Real Estate"
+    },
+    {
+      "ticker": "O",
+      "weight": 2.0,
+      "expected_return": 15.14,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 2.2,
+        "growth": -2.31,
+        "valuation_reversion": 5.46,
+        "macro_adjustment": 0.5,
+        "risk_premium": -0.28,
+        "factor_tilt": 1.05
+      },
+      "volatility": 16.1,
+      "composite_score": 76.2,
+      "sector": "Real Estate"
+    },
+    {
+      "ticker": "MU",
+      "weight": 2.0,
+      "expected_return": 24.15,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": -0.6,
+        "growth": 6.25,
+        "valuation_reversion": 6.26,
+        "macro_adjustment": 1.35,
+        "risk_premium": 1.45,
+        "factor_tilt": 0.92
+      },
+      "volatility": 68.2,
+      "composite_score": 72.9,
+      "sector": "Technology"
+    },
+    {
+      "ticker": "AMAT",
+      "weight": 2.0,
+      "expected_return": 23.21,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": -0.6,
+        "growth": 6.03,
+        "valuation_reversion": 6.69,
+        "macro_adjustment": 1.08,
+        "risk_premium": 0.84,
+        "factor_tilt": 0.65
+      },
+      "volatility": 46.6,
+      "composite_score": 66.3,
+      "sector": "Technology"
+    },
+    {
+      "ticker": "LRCX",
+      "weight": 2.0,
+      "expected_return": 21.38,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": -0.6,
+        "growth": 6.18,
+        "valuation_reversion": 4.57,
+        "macro_adjustment": 1.09,
+        "risk_premium": 1.04,
+        "factor_tilt": 0.58
+      },
+      "volatility": 53.7,
+      "composite_score": 64.5,
+      "sector": "Technology"
+    },
+    {
+      "ticker": "ETR",
+      "weight": 2.0,
+      "expected_return": 13.91,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 1.9,
+        "growth": -3.33,
+        "valuation_reversion": 6.64,
+        "macro_adjustment": 0.0,
+        "risk_premium": -0.5,
+        "factor_tilt": 0.68
+      },
+      "volatility": 18.1,
+      "composite_score": 66.9,
+      "sector": "Utilities"
+    },
+    {
+      "ticker": "ES",
+      "weight": 2.0,
+      "expected_return": 14.02,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 1.9,
+        "growth": -3.32,
+        "valuation_reversion": 6.47,
+        "macro_adjustment": 0.0,
+        "risk_premium": -0.2,
+        "factor_tilt": 0.65
+      },
+      "volatility": 28.7,
+      "composite_score": 66.3,
+      "sector": "Utilities"
+    },
+    {
+      "ticker": "CNP",
+      "weight": 2.0,
+      "expected_return": 13.7,
+      "return_components": {
+        "market_baseline": 8.52,
+        "cash_yield": 1.9,
+        "growth": -3.35,
+        "valuation_reversion": 6.54,
+        "macro_adjustment": 0.0,
+        "risk_premium": -0.58,
+        "factor_tilt": 0.67
+      },
+      "volatility": 15.1,
+      "composite_score": 66.8,
+      "sector": "Utilities"
+    }
+  ],
+  "weights": {
+    "VZ": 2.0,
+    "GOOGL": 2.0,
+    "GOOG": 2.0,
+    "ROST": 10.0,
+    "DG": 2.0,
+    "MCD": 15.0,
+    "HSY": 2.0,
+    "BG": 2.0,
+    "CLX": 2.0,
+    "NBR": 2.0,
+    "FTI": 2.0,
+    "APA": 2.0,
+    "C": 2.0,
+    "GS": 2.0,
+    "MS": 2.0,
+    "JNJ": 15.0,
+    "MRK": 2.0,
+    "BMY": 2.0,
+    "LMT": 2.0,
+    "HON": 2.0,
+    "AME": 2.0,
+    "ATI": 2.0,
+    "ECL": 2.0,
+    "FCX": 2.0,
+    "PLD": 2.0,
+    "EQIX": 2.0,
+    "O": 2.0,
+    "MU": 2.0,
+    "AMAT": 2.0,
+    "LRCX": 2.0,
+    "ETR": 2.0,
+    "ES": 2.0,
+    "CNP": 2.0
+  },
+  "macro_regime": {
+    "state": "Expansion",
+    "risk_off_probability": 0.0,
+    "features": {
+      "yield_curve_slope": 0.34,
+      "term_spread_2s10s": 0.6,
+      "inflation_cpi_yoy": 2.83,
+      "inflation_trend_6m": 0.15,
+      "unemployment": 4.3,
+      "unemployment_trend_6m": 0.2,
+      "real_rate": 1.19,
+      "nfci": -0.56,
+      "baa10y_spread": 1.73
+    }
+  },
+  "return_decomposition": {
+    "market_return": 8.52,
+    "cash_yield_premium": 0.35,
+    "growth_premium": 0.9,
+    "multiple_reversion": 6.26,
+    "macro_adjustment": 0.65,
+    "risk_adjustment": 0.1,
+    "factor_tilt": 0.87,
+    "total": 17.65
+  },
+  "methodology": "Macro-aware expected returns using Gordon Growth decomposition (yield + growth + valuation reversion), FRED-based regime detection (yield curve, inflation, unemployment), sector-level macro tilts, and beta risk compensation.  3-year investment horizon."
+}

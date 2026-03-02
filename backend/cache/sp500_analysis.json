@@ -194,7 +194,7 @@
     },
     {
       "ticker": "O",
-      "sector": "Other",
+      "sector": "Real Estate",
       "current_price": 67.0,
       "price_position": 92.7547462223944,
       "return_1m": 11.536540702513731,
@@ -290,7 +290,7 @@
     },
     {
       "ticker": "DG",
-      "sector": "Other",
+      "sector": "Consumer",
       "current_price": 156.24,
       "price_position": 96.84727503168571,
       "return_1m": 7.722007722007729,
@@ -338,7 +338,7 @@
     },
     {
       "ticker": "VRTX",
-      "sector": "Other",
+      "sector": "Healthcare",
       "current_price": 496.83,
       "price_position": 95.01679929266135,
       "return_1m": 3.9589043962252157,
@@ -578,7 +578,7 @@
     },
     {
       "ticker": "WMT",
-      "sector": "Consumer",
+      "sector": "Consumer Staples",
       "current_price": 127.95,
       "price_position": 83.664566165778,
       "return_1m": 9.762374538903673,
@@ -626,7 +626,7 @@
     },
     {
       "ticker": "VTR",
-      "sector": "Other",
+      "sector": "Real Estate",
       "current_price": 86.16,
       "price_position": 93.45078513979315,
       "return_1m": 13.487881981032658,
@@ -674,7 +674,7 @@
     },
     {
       "ticker": "ATI",
-      "sector": "Other",
+      "sector": "Materials",
       "current_price": 163.59,
       "price_position": 99.28601875532823,
       "return_1m": 34.398619783108785,
@@ -818,7 +818,7 @@
     },
     {
       "ticker": "AMGN",
-      "sector": "Other",
+      "sector": "Healthcare",
       "current_price": 388.16,
       "price_position": 98.38116261957325,
       "return_1m": 13.424113143591843,
@@ -866,7 +866,7 @@
     },
     {
       "ticker": "CLX",
-      "sector": "Other",
+      "sector": "Consumer Staples",
       "current_price": 127.16,
       "price_position": 86.23123050955755,
       "return_1m": 16.874999999999996,
@@ -1058,7 +1058,7 @@
     },
     {
       "ticker": "GILD",
-      "sector": "Other",
+      "sector": "Healthcare",
       "current_price": 148.95,
       "price_position": 84.21351504826802,
       "return_1m": 6.6060692814199795,
@@ -1106,7 +1106,7 @@
     },
     {
       "ticker": "NEM",
-      "sector": "Other",
+      "sector": "Materials",
       "current_price": 130.0,
       "price_position": 94.12614347616756,
       "return_1m": -1.477832512315258,
@@ -1202,7 +1202,7 @@
     },
     {
       "ticker": "FTI",
-      "sector": "Other",
+      "sector": "Energy",
       "current_price": 66.31,
       "price_position": 96.792550439731,
       "return_1m": 20.018099547511326,
@@ -1298,7 +1298,7 @@
     },
     {
       "ticker": "HSY",
-      "sector": "Other",
+      "sector": "Consumer Staples",
       "current_price": 236.28,
       "price_position": 99.40877379685467,
       "return_1m": 23.062500000000007,
@@ -1346,7 +1346,7 @@
     },
     {
       "ticker": "NBR",
-      "sector": "Other",
+      "sector": "Energy",
       "current_price": 78.12,
       "price_position": 96.06862044317371,
       "return_1m": 18.23823217799305,
@@ -1442,7 +1442,7 @@
     },
     {
       "ticker": "FOLD",
-      "sector": "Other",
+      "sector": "Healthcare",
       "current_price": 14.37,
       "price_position": 99.88726042841036,
       "return_1m": 0.6302521008403339,
@@ -1538,7 +1538,7 @@
     },
     {
       "ticker": "OXY",
-      "sector": "Other",
+      "sector": "Energy",
       "current_price": 53.08,
       "price_position": 98.27942188575362,
       "return_1m": 18.402855230872195,
@@ -1730,7 +1730,7 @@
     },
     {
       "ticker": "COST",
-      "sector": "Consumer",
+      "sector": "Consumer Staples",
       "current_price": 1010.79,
       "price_position": 74.76011120078918,
       "return_1m": 5.20514581902205,
@@ -1778,7 +1778,7 @@
     },
     {
       "ticker": "ETR",
-      "sector": "Other",
+      "sector": "Utilities",
       "current_price": 107.11,
       "price_position": 99.63099630996311,
       "return_1m": 11.017827529021563,
@@ -1826,7 +1826,7 @@
     },
     {
       "ticker": "AME",
-      "sector": "Other",
+      "sector": "Industrial",
       "current_price": 239.22,
       "price_position": 98.90093115554878,
       "return_1m": 7.5194390759135254,
@@ -1874,7 +1874,7 @@
     },
     {
       "ticker": "CNP",
-      "sector": "Other",
+      "sector": "Utilities",
       "current_price": 43.5,
       "price_position": 99.07578558225505,
       "return_1m": 9.323950741392316,
@@ -1922,7 +1922,7 @@
     },
     {
       "ticker": "NI",
-      "sector": "Other",
+      "sector": "Utilities",
       "current_price": 47.3,
       "price_position": 99.4438264738598,
       "return_1m": 6.699751861042191,
@@ -1970,7 +1970,7 @@
     },
     {
       "ticker": "REG",
-      "sector": "Other",
+      "sector": "Real Estate",
       "current_price": 79.0,
       "price_position": 99.34641592160267,
       "return_1m": 12.136266855926191,
@@ -2066,7 +2066,7 @@
     },
     {
       "ticker": "LNT",
-      "sector": "Other",
+      "sector": "Utilities",
       "current_price": 72.34,
       "price_position": 99.53051643192487,
       "return_1m": 9.17597343797163,
@@ -2114,7 +2114,7 @@
     },
     {
       "ticker": "RIG",
-      "sector": "Other",
+      "sector": "Energy",
       "current_price": 6.48,
       "price_position": 89.61038961038962,
       "return_1m": 33.05954825462012,
@@ -2162,7 +2162,7 @@
     },
     {
       "ticker": "AEE",
-      "sector": "Other",
+      "sector": "Utilities",
       "current_price": 113.28,
       "price_position": 99.22247303737144,
       "return_1m": 9.364742228229384,
@@ -2210,7 +2210,7 @@
     },
     {
       "ticker": "FE",
-      "sector": "Other",
+      "sector": "Utilities",
       "current_price": 51.16,
       "price_position": 98.50808122668872,
       "return_1m": 7.909723686985859,
@@ -2306,7 +2306,7 @@
     },
     {
       "ticker": "ATO",
-      "sector": "Other",
+      "sector": "Utilities",
       "current_price": 186.79,
       "price_position": 97.27837230809882,
       "return_1m": 12.524096385542173,
@@ -2402,7 +2402,7 @@
     },
     {
       "ticker": "ES",
-      "sector": "Other",
+      "sector": "Utilities",
       "current_price": 76.21,
       "price_position": 98.6559139784946,
       "return_1m": 9.027181688125886,
@@ -2498,7 +2498,7 @@
     },
     {
       "ticker": "APA",
-      "sector": "Other",
+      "sector": "Energy",
       "current_price": 30.37,
       "price_position": 99.6471418489767,
       "return_1m": 16.76278354479046,
@@ -2546,7 +2546,7 @@
     },
     {
       "ticker": "CMS",
-      "sector": "Other",
+      "sector": "Utilities",
       "current_price": 78.07,
       "price_position": 97.58551307847073,
       "return_1m": 8.732590529247908,
@@ -2594,7 +2594,7 @@
     },
     {
       "ticker": "VALE",
-      "sector": "Other",
+      "sector": "Materials",
       "current_price": 17.18,
       "price_position": 93.82857142857144,
       "return_1m": 2.5059665871121517,
@@ -2642,7 +2642,7 @@
     },
     {
       "ticker": "AA",
-      "sector": "Other",
+      "sector": "Materials",
       "current_price": 62.08,
       "price_position": 88.1566147859922,
       "return_1m": 3.44942509581736,
@@ -2690,7 +2690,7 @@
     },
     {
       "ticker": "REGN",
-      "sector": "Other",
+      "sector": "Healthcare",
       "current_price": 781.67,
       "price_position": 88.55561336428114,
       "return_1m": 4.065874083048193,
@@ -2738,7 +2738,7 @@
     },
     {
       "ticker": "FCX",
-      "sector": "Other",
+      "sector": "Materials",
       "current_price": 68.08,
       "price_position": 95.17341040462426,
       "return_1m": 6.993556498506992,
@@ -2786,7 +2786,7 @@
     },
     {
       "ticker": "BG",
-      "sector": "Other",
+      "sector": "Consumer Staples",
       "current_price": 120.65,
       "price_position": 92.2339225272659,
       "return_1m": 4.640069384215106,
@@ -2834,7 +2834,7 @@
     },
     {
       "ticker": "HP",
-      "sector": "Other",
+      "sector": "Energy",
       "current_price": 35.22,
       "price_position": 93.0414746543779,
       "return_1m": 6.404833836857993,
@@ -2882,7 +2882,7 @@
     },
     {
       "ticker": "NOV",
-      "sector": "Other",
+      "sector": "Energy",
       "current_price": 20.26,
       "price_position": 93.53963083604778,
       "return_1m": 10.228509249183904,
@@ -2930,7 +2930,7 @@
     },
     {
       "ticker": "PH",
-      "sector": "Other",
+      "sector": "Industrial",
       "current_price": 1009.18,
       "price_position": 93.51854179761155,
       "return_1m": 10.140024228666222,
@@ -2978,7 +2978,7 @@
     },
     {
       "ticker": "XEL",
-      "sector": "Other",
+      "sector": "Utilities",
       "current_price": 83.36,
       "price_position": 95.42586750788642,
       "return_1m": 9.669780292066822,
@@ -3074,7 +3074,7 @@
     },
     {
       "ticker": "EXC",
-      "sector": "Other",
+      "sector": "Utilities",
       "current_price": 49.47,
       "price_position": 94.78428847392144,
       "return_1m": 10.522788203753365,
@@ -3218,7 +3218,7 @@
     },
     {
       "ticker": "LRCX",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 233.89,
       "price_position": 87.13810034426321,
       "return_1m": -2.3749895650722164,
@@ -3314,7 +3314,7 @@
     },
     {
       "ticker": "GOOGL",
-      "sector": "Technology",
+      "sector": "Communication",
       "current_price": 311.76,
       "price_position": 80.0855614973262,
       "return_1m": -7.217047111693109,
@@ -3362,7 +3362,7 @@
     },
     {
       "ticker": "WEC",
-      "sector": "Other",
+      "sector": "Utilities",
       "current_price": 116.96,
       "price_position": 92.19496654985659,
       "return_1m": 6.288622319156656,
@@ -3458,7 +3458,7 @@
     },
     {
       "ticker": "GOOG",
-      "sector": "Technology",
+      "sector": "Communication",
       "current_price": 311.43,
       "price_position": 79.27416764800344,
       "return_1m": -7.389675270607821,
@@ -3506,7 +3506,7 @@
     },
     {
       "ticker": "TGT",
-      "sector": "Consumer",
+      "sector": "Consumer Staples",
       "current_price": 113.79,
       "price_position": 85.39673607203152,
       "return_1m": 11.84391586396698,
@@ -3554,7 +3554,7 @@
     },
     {
       "ticker": "TSN",
-      "sector": "Other",
+      "sector": "Consumer Staples",
       "current_price": 64.99,
       "price_position": 91.04100946372239,
       "return_1m": 0.6037151702786403,
@@ -3602,7 +3602,7 @@
     },
     {
       "ticker": "GGG",
-      "sector": "Other",
+      "sector": "Industrial",
       "current_price": 93.92,
       "price_position": 89.47681331747921,
       "return_1m": 8.165380628814933,
@@ -3650,7 +3650,7 @@
     },
     {
       "ticker": "ILMN",
-      "sector": "Other",
+      "sector": "Healthcare",
       "current_price": 134.46,
       "price_position": 72.63019784616586,
       "return_1m": -10.276257840651281,
@@ -3698,7 +3698,7 @@
     },
     {
       "ticker": "K",
-      "sector": "Other",
+      "sector": "Consumer Staples",
       "current_price": 83.44,
       "price_position": 97.07112970711286,
       "return_1m": 0.1440230436869916,
@@ -3794,7 +3794,7 @@
     },
     {
       "ticker": "DOCN",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 56.06,
       "price_position": 67.97414753733007,
       "return_1m": -6.938911022576355,
@@ -3890,7 +3890,7 @@
     },
     {
       "ticker": "ED",
-      "sector": "Other",
+      "sector": "Utilities",
       "current_price": 112.52,
       "price_position": 86.54509610645637,
       "return_1m": 6.9785130252899785,
@@ -3938,7 +3938,7 @@
     },
     {
       "ticker": "PEG",
-      "sector": "Other",
+      "sector": "Utilities",
       "current_price": 86.07,
       "price_position": 63.043478260869556,
       "return_1m": 5.672191528545101,
@@ -3986,7 +3986,7 @@
     },
     {
       "ticker": "SJM",
-      "sector": "Other",
+      "sector": "Consumer Staples",
       "current_price": 115.95,
       "price_position": 86.81487159831353,
       "return_1m": 12.18072755417956,
@@ -4034,7 +4034,7 @@
     },
     {
       "ticker": "DVN",
-      "sector": "Other",
+      "sector": "Energy",
       "current_price": 43.53,
       "price_position": 83.53236957888123,
       "return_1m": 9.289480291237773,
@@ -4130,7 +4130,7 @@
     },
     {
       "ticker": "TFC",
-      "sector": "Other",
+      "sector": "Finance",
       "current_price": 49.31,
       "price_position": 61.58867242418157,
       "return_1m": -1.9876764062810581,
@@ -4226,7 +4226,7 @@
     },
     {
       "ticker": "BIIB",
-      "sector": "Other",
+      "sector": "Healthcare",
       "current_price": 191.82,
       "price_position": 86.98377581120944,
       "return_1m": 9.718011782874791,
@@ -4322,7 +4322,7 @@
     },
     {
       "ticker": "STLD",
-      "sector": "Other",
+      "sector": "Materials",
       "current_price": 193.13,
       "price_position": 82.6823210657033,
       "return_1m": 10.752379860075688,
@@ -4418,7 +4418,7 @@
     },
     {
       "ticker": "HAL",
-      "sector": "Other",
+      "sector": "Energy",
       "current_price": 36.0,
       "price_position": 98.86702444841981,
       "return_1m": 7.913669064748197,
@@ -4466,7 +4466,7 @@
     },
     {
       "ticker": "ITW",
-      "sector": "Other",
+      "sector": "Industrial",
       "current_price": 290.63,
       "price_position": 80.53159244579159,
       "return_1m": 12.538238141335922,
@@ -4514,7 +4514,7 @@
     },
     {
       "ticker": "CTRA",
-      "sector": "Other",
+      "sector": "Energy",
       "current_price": 30.59,
       "price_position": 79.88394584139263,
       "return_1m": 10.075566750629728,
@@ -4610,7 +4610,7 @@
     },
     {
       "ticker": "KLAC",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 1524.55,
       "price_position": 82.28584021576015,
       "return_1m": -6.308382497541798,
@@ -4658,7 +4658,7 @@
     },
     {
       "ticker": "PSX",
-      "sector": "Other",
+      "sector": "Energy",
       "current_price": 154.33,
       "price_position": 82.01520912547532,
       "return_1m": 8.621903153153143,
@@ -4754,7 +4754,7 @@
     },
     {
       "ticker": "SWK",
-      "sector": "Other",
+      "sector": "Industrial",
       "current_price": 86.49,
       "price_position": 78.1379091197966,
       "return_1m": 9.039334341906201,
@@ -4802,7 +4802,7 @@
     },
     {
       "ticker": "HST",
-      "sector": "Other",
+      "sector": "Real Estate",
       "current_price": 19.59,
       "price_position": 78.44036697247707,
       "return_1m": 6.236442516268981,
@@ -4850,7 +4850,7 @@
     },
     {
       "ticker": "STT",
-      "sector": "Other",
+      "sector": "Finance",
       "current_price": 128.62,
       "price_position": 80.33149867358533,
       "return_1m": 0.4686767692547944,
@@ -4946,7 +4946,7 @@
     },
     {
       "ticker": "MCHP",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 74.64,
       "price_position": 74.992822279644,
       "return_1m": -7.025411061285503,
@@ -4994,7 +4994,7 @@
     },
     {
       "ticker": "IR",
-      "sector": "Other",
+      "sector": "Industrial",
       "current_price": 94.14,
       "price_position": 76.07856892318486,
       "return_1m": 10.42815249266862,
@@ -5042,7 +5042,7 @@
     },
     {
       "ticker": "NUE",
-      "sector": "Other",
+      "sector": "Materials",
       "current_price": 176.88,
       "price_position": 77.92885183714877,
       "return_1m": 2.136505370135122,
@@ -5138,7 +5138,7 @@
     },
     {
       "ticker": "BK",
-      "sector": "Other",
+      "sector": "Finance",
       "current_price": 119.1,
       "price_position": 76.6384522370012,
       "return_1m": 0.1682085786375076,
@@ -5234,7 +5234,7 @@
     },
     {
       "ticker": "CPT",
-      "sector": "Other",
+      "sector": "Real Estate",
       "current_price": 108.34,
       "price_position": 51.1681172698122,
       "return_1m": 1.0445812348442551,
@@ -5282,7 +5282,7 @@
     },
     {
       "ticker": "ROK",
-      "sector": "Other",
+      "sector": "Industrial",
       "current_price": 407.45,
       "price_position": 77.16434804834408,
       "return_1m": -1.7956134008194735,
@@ -5426,7 +5426,7 @@
     },
     {
       "ticker": "DLTR",
-      "sector": "Other",
+      "sector": "Consumer",
       "current_price": 126.48,
       "price_position": 72.40422950251345,
       "return_1m": 6.196473551637283,
@@ -5474,7 +5474,7 @@
     },
     {
       "ticker": "FANG",
-      "sector": "Other",
+      "sector": "Energy",
       "current_price": 174.08,
       "price_position": 92.71264367816094,
       "return_1m": 8.616709303051096,
@@ -5522,7 +5522,7 @@
     },
     {
       "ticker": "ZEUS",
-      "sector": "Other",
+      "sector": "Materials",
       "current_price": 47.86,
       "price_position": 81.2451057165231,
       "return_1m": -0.3954214360041619,
@@ -5570,7 +5570,7 @@
     },
     {
       "ticker": "EMR",
-      "sector": "Other",
+      "sector": "Industrial",
       "current_price": 150.75,
       "price_position": 71.3375796178344,
       "return_1m": 1.5698692898531208,
@@ -5618,7 +5618,7 @@
     },
     {
       "ticker": "CMC",
-      "sector": "Other",
+      "sector": "Materials",
       "current_price": 73.3,
       "price_position": 70.61214122428242,
       "return_1m": -2.3317788141239193,
@@ -5666,7 +5666,7 @@
     },
     {
       "ticker": "CFG",
-      "sector": "Other",
+      "sector": "Finance",
       "current_price": 60.19,
       "price_position": 71.32759885310394,
       "return_1m": -4.338842975206614,
@@ -5762,7 +5762,7 @@
     },
     {
       "ticker": "BMRN",
-      "sector": "Other",
+      "sector": "Healthcare",
       "current_price": 61.73,
       "price_position": 70.70576861102154,
       "return_1m": 8.909668313338038,
@@ -5906,7 +5906,7 @@
     },
     {
       "ticker": "MTB",
-      "sector": "Other",
+      "sector": "Finance",
       "current_price": 216.98,
       "price_position": 65.7222914072229,
       "return_1m": 0.041495689058979046,
@@ -5954,7 +5954,7 @@
     },
     {
       "ticker": "KEY",
-      "sector": "Other",
+      "sector": "Finance",
       "current_price": 20.74,
       "price_position": 67.69993800371978,
       "return_1m": -2.674800563115909,
@@ -6098,7 +6098,7 @@
     },
     {
       "ticker": "USB",
-      "sector": "Other",
+      "sector": "Finance",
       "current_price": 54.66,
       "price_position": 65.59536354056901,
       "return_1m": -1.9375672766415608,
@@ -6146,7 +6146,7 @@
     },
     {
       "ticker": "ETN",
-      "sector": "Other",
+      "sector": "Industrial",
       "current_price": 375.92,
       "price_position": 66.30761263593996,
       "return_1m": 8.234481170102503,
@@ -6290,7 +6290,7 @@
     },
     {
       "ticker": "ANSS",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 374.3,
       "price_position": 71.3270623265886,
       "return_1m": 10.736368746486802,
@@ -6434,7 +6434,7 @@
     },
     {
       "ticker": "FAST",
-      "sector": "Other",
+      "sector": "Industrial",
       "current_price": 46.04,
       "price_position": 60.6336355137782,
       "return_1m": 5.547913801008719,
@@ -6530,7 +6530,7 @@
     },
     {
       "ticker": "GPN",
-      "sector": "Other",
+      "sector": "Finance",
       "current_price": 76.46,
       "price_position": 40.55357517299219,
       "return_1m": 6.179697264268835,
@@ -6722,7 +6722,7 @@
     },
     {
       "ticker": "PNC",
-      "sector": "Other",
+      "sector": "Finance",
       "current_price": 212.35,
       "price_position": 57.66550522648083,
       "return_1m": -4.083291928271371,
@@ -6770,7 +6770,7 @@
     },
     {
       "ticker": "CAG",
-      "sector": "Other",
+      "sector": "Consumer Staples",
       "current_price": 19.25,
       "price_position": 46.143057503506306,
       "return_1m": 8.880090497737548,
@@ -6818,7 +6818,7 @@
     },
     {
       "ticker": "NXPI",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 227.01,
       "price_position": 59.99182115594327,
       "return_1m": -5.42432195975503,
@@ -6914,7 +6914,7 @@
     },
     {
       "ticker": "ZION",
-      "sector": "Other",
+      "sector": "Finance",
       "current_price": 57.28,
       "price_position": 56.93536673928832,
       "return_1m": -1.800102863020736,
@@ -7058,7 +7058,7 @@
     },
     {
       "ticker": "MDLZ",
-      "sector": "Other",
+      "sector": "Consumer Staples",
       "current_price": 61.58,
       "price_position": 52.02815150482222,
       "return_1m": 6.66897626883769,
@@ -7202,7 +7202,7 @@
     },
     {
       "ticker": "UDR",
-      "sector": "Other",
+      "sector": "Real Estate",
       "current_price": 37.5,
       "price_position": 49.137931034482776,
       "return_1m": 2.937139720010973,
@@ -7250,7 +7250,7 @@
     },
     {
       "ticker": "AVB",
-      "sector": "Other",
+      "sector": "Real Estate",
       "current_price": 177.23,
       "price_position": 24.345003477857627,
       "return_1m": 2.4628548303173847,
@@ -7298,7 +7298,7 @@
     },
     {
       "ticker": "META",
-      "sector": "Technology",
+      "sector": "Communication",
       "current_price": 648.18,
       "price_position": 31.130232558139507,
       "return_1m": -3.0729890987394093,
@@ -7394,7 +7394,7 @@
     },
     {
       "ticker": "FTNT",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 79.03,
       "price_position": 23.05304010349288,
       "return_1m": -3.7158869395711447,
@@ -7490,7 +7490,7 @@
     },
     {
       "ticker": "AZO",
-      "sector": "Other",
+      "sector": "Consumer",
       "current_price": 3755.58,
       "price_position": 46.27693457562916,
       "return_1m": -0.7022479337094878,
@@ -7538,7 +7538,7 @@
     },
     {
       "ticker": "MDB",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 328.47,
       "price_position": 55.678828777307565,
       "return_1m": -20.08806928766057,
@@ -7586,7 +7586,7 @@
     },
     {
       "ticker": "KMB",
-      "sector": "Other",
+      "sector": "Consumer Staples",
       "current_price": 111.44,
       "price_position": 31.59537933187635,
       "return_1m": 11.95499296765119,
@@ -7634,7 +7634,7 @@
     },
     {
       "ticker": "EQR",
-      "sector": "Other",
+      "sector": "Real Estate",
       "current_price": 63.21,
       "price_position": 40.486169321039384,
       "return_1m": 4.0322580645161255,
@@ -7682,7 +7682,7 @@
     },
     {
       "ticker": "AAP",
-      "sector": "Other",
+      "sector": "Consumer",
       "current_price": 53.17,
       "price_position": 47.586421675490506,
       "return_1m": 7.219197418834433,
@@ -7778,7 +7778,7 @@
     },
     {
       "ticker": "HBAN",
-      "sector": "Other",
+      "sector": "Finance",
       "current_price": 16.8,
       "price_position": 39.72758229284906,
       "return_1m": -1.5240328253223745,
@@ -7874,7 +7874,7 @@
     },
     {
       "ticker": "PLTR",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 137.19,
       "price_position": 20.61180720171576,
       "return_1m": -12.81220209723546,
@@ -7922,7 +7922,7 @@
     },
     {
       "ticker": "FLYW",
-      "sector": "Other",
+      "sector": "Finance",
       "current_price": 12.31,
       "price_position": 44.37086092715233,
       "return_1m": -6.742424242424239,
@@ -7970,7 +7970,7 @@
     },
     {
       "ticker": "RS",
-      "sector": "Other",
+      "sector": "Materials",
       "current_price": 315.64,
       "price_position": 52.55509118541033,
       "return_1m": -3.136316209415091,
@@ -8018,7 +8018,7 @@
     },
     {
       "ticker": "AN",
-      "sector": "Other",
+      "sector": "Consumer",
       "current_price": 195.16,
       "price_position": 35.905108740643975,
       "return_1m": -9.618857963228834,
@@ -8066,7 +8066,7 @@
     },
     {
       "ticker": "CDNS",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 301.4,
       "price_position": 33.9950394033211,
       "return_1m": -5.956504103092152,
@@ -8114,7 +8114,7 @@
     },
     {
       "ticker": "ORLY",
-      "sector": "Other",
+      "sector": "Consumer",
       "current_price": 93.88,
       "price_position": 31.871412169919616,
       "return_1m": -7.388773798954329,
@@ -8210,7 +8210,7 @@
     },
     {
       "ticker": "WOR",
-      "sector": "Other",
+      "sector": "Materials",
       "current_price": 56.01,
       "price_position": 26.817288801571713,
       "return_1m": 4.069119286510592,
@@ -8258,7 +8258,7 @@
     },
     {
       "ticker": "MAA",
-      "sector": "Other",
+      "sector": "Real Estate",
       "current_price": 133.86,
       "price_position": 26.148637755924607,
       "return_1m": 1.0569228446323464,
@@ -8306,7 +8306,7 @@
     },
     {
       "ticker": "CLF",
-      "sector": "Other",
+      "sector": "Materials",
       "current_price": 10.66,
       "price_position": 45.43812104787715,
       "return_1m": -24.128113879003564,
@@ -8354,7 +8354,7 @@
     },
     {
       "ticker": "AMZN",
-      "sector": "Technology",
+      "sector": "Consumer",
       "current_price": 210.0,
       "price_position": 22.364217252396156,
       "return_1m": -13.583803135673422,
@@ -8402,7 +8402,7 @@
     },
     {
       "ticker": "KMX",
-      "sector": "Other",
+      "sector": "Consumer",
       "current_price": 43.17,
       "price_position": 30.93697579678889,
       "return_1m": -8.070698466780236,
@@ -8450,7 +8450,7 @@
     },
     {
       "ticker": "HRL",
-      "sector": "Other",
+      "sector": "Consumer Staples",
       "current_price": 25.6,
       "price_position": 42.19759926131118,
       "return_1m": 4.065040650406493,
@@ -8546,7 +8546,7 @@
     },
     {
       "ticker": "BILL",
-      "sector": "Other",
+      "sector": "Finance",
       "current_price": 44.51,
       "price_position": 41.615906217676105,
       "return_1m": -4.382384532760475,
@@ -8594,7 +8594,7 @@
     },
     {
       "ticker": "TSCO",
-      "sector": "Other",
+      "sector": "Consumer",
       "current_price": 51.84,
       "price_position": 27.462850524480757,
       "return_1m": -5.984766050054402,
@@ -8642,7 +8642,7 @@
     },
     {
       "ticker": "ESS",
-      "sector": "Other",
+      "sector": "Real Estate",
       "current_price": 255.11,
       "price_position": 23.328088119590912,
       "return_1m": 3.9229265113247536,
@@ -8690,7 +8690,7 @@
     },
     {
       "ticker": "DDOG",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 111.96,
       "price_position": 13.454777637709912,
       "return_1m": -20.34718269778031,
@@ -8882,7 +8882,7 @@
     },
     {
       "ticker": "GIS",
-      "sector": "Other",
+      "sector": "Consumer Staples",
       "current_price": 45.23,
       "price_position": 19.709794437726725,
       "return_1m": 1.9842164599774392,
@@ -8978,7 +8978,7 @@
     },
     {
       "ticker": "SNAP",
-      "sector": "Other",
+      "sector": "Communication",
       "current_price": 5.21,
       "price_position": 9.720654872480422,
       "return_1m": -32.073011734028675,
@@ -9026,7 +9026,7 @@
     },
     {
       "ticker": "PANW",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 148.92,
       "price_position": 11.125019931127513,
       "return_1m": -18.950691194078594,
@@ -9122,7 +9122,7 @@
     },
     {
       "ticker": "TDG",
-      "sector": "Other",
+      "sector": "Industrial",
       "current_price": 1302.79,
       "price_position": 17.28779934816492,
       "return_1m": -7.742913187879308,
@@ -9266,7 +9266,7 @@
     },
     {
       "ticker": "CPB",
-      "sector": "Other",
+      "sector": "Consumer Staples",
       "current_price": 26.95,
       "price_position": 14.179104477611922,
       "return_1m": -0.11119347664937385,
@@ -9362,7 +9362,7 @@
     },
     {
       "ticker": "SNPS",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 414.0,
       "price_position": 13.725276719288694,
       "return_1m": -19.037841009093583,
@@ -9410,7 +9410,7 @@
     },
     {
       "ticker": "CRWD",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 371.98,
       "price_position": 13.052011776251227,
       "return_1m": -20.718685393976855,
@@ -9506,7 +9506,7 @@
     },
     {
       "ticker": "NET",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 172.19,
       "price_position": 16.42754150784474,
       "return_1m": -6.863911726525318,
@@ -9650,7 +9650,7 @@
     },
     {
       "ticker": "SNOW",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 168.41,
       "price_position": 10.936570272521715,
       "return_1m": -22.032407407407405,
@@ -9698,7 +9698,7 @@
     },
     {
       "ticker": "TDOC",
-      "sector": "Other",
+      "sector": "Healthcare",
       "current_price": 5.26,
       "price_position": 16.01489757914338,
       "return_1m": -8.362369337979104,
@@ -9746,7 +9746,7 @@
     },
     {
       "ticker": "LAD",
-      "sector": "Other",
+      "sector": "Consumer",
       "current_price": 279.58,
       "price_position": 6.446767951013788,
       "return_1m": -15.116738014998333,
@@ -9890,7 +9890,7 @@
     },
     {
       "ticker": "BXP",
-      "sector": "Other",
+      "sector": "Real Estate",
       "current_price": 57.58,
       "price_position": 0.5941499085923011,
       "return_1m": -10.24162120031178,
@@ -9986,7 +9986,7 @@
     },
     {
       "ticker": "PINS",
-      "sector": "Other",
+      "sector": "Communication",
       "current_price": 17.13,
       "price_position": 12.610195477194324,
       "return_1m": -24.069148936170215,
@@ -10130,7 +10130,7 @@
     },
     {
       "ticker": "AIV",
-      "sector": "Other",
+      "sector": "Real Estate",
       "current_price": 4.41,
       "price_position": 2.192982456140363,
       "return_1m": -24.486301369863007,
@@ -10226,7 +10226,7 @@
     },
     {
       "ticker": "ESTC",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 52.07,
       "price_position": 4.7005307050796095,
       "return_1m": -29.040610520577815,
@@ -10466,7 +10466,7 @@
     },
     {
       "ticker": "TEAM",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 75.13,
       "price_position": 4.70466589117229,
       "return_1m": -44.24903532205402,
@@ -10514,7 +10514,7 @@
     },
     {
       "ticker": "ZS",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 146.99,
       "price_position": 3.273406117549803,
       "return_1m": -31.297032016826353,
@@ -10562,7 +10562,7 @@
     },
     {
       "ticker": "BBY",
-      "sector": "Other",
+      "sector": "Consumer",
       "current_price": 61.97,
       "price_position": 4.003336113427861,
       "return_1m": -5.475899938987194,
@@ -10658,7 +10658,7 @@
     },
     {
       "ticker": "AFRM",
-      "sector": "Other",
+      "sector": "Finance",
       "current_price": 46.98,
       "price_position": 2.068710749907642,
       "return_1m": -28.121175030599755,
@@ -10754,7 +10754,7 @@
     },
     {
       "ticker": "AI",
-      "sector": "Other",
+      "sector": "Technology",
       "current_price": 7.95,
       "price_position": 0.9773434029320291,
       "return_1m": -39.45163747143945,

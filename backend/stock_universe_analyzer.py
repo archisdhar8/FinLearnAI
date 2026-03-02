@@ -55,21 +55,58 @@ SP500_TICKERS = [
     # And more... (truncated for brevity, will include full list)
 ]
 
-# Sector mappings (simplified - can be enhanced with actual GICS sectors)
+# Sector mappings — comprehensive GICS-aligned classification.
+# Every ticker in SP500_TICKERS must appear exactly once below.
 SECTOR_MAPPINGS = {
-    "Technology": ["AAPL", "MSFT", "GOOGL", "GOOG", "AMZN", "META", "NVDA", "CRM", "ADBE", "ORCL",
-                    "INTC", "AMD", "QCOM", "TXN", "AVGO", "CSCO", "NOW", "INTU", "AMAT", "MU"],
-    "Finance": ["JPM", "BAC", "WFC", "GS", "MS", "C", "BLK", "SCHW", "AXP", "COF",
-                "V", "MA", "PYPL", "SQ", "FIS", "FISV"],
-    "Healthcare": ["JNJ", "UNH", "PFE", "ABBV", "MRK", "LLY", "TMO", "ABT", "DHR", "BMY"],
-    "Consumer": ["WMT", "HD", "NKE", "SBUX", "MCD", "COST", "TGT", "LOW", "TJX", "ROST"],
-    "Industrial": ["BA", "CAT", "GE", "HON", "RTX", "LMT", "NOC", "GD"],
-    "Energy": ["XOM", "CVX", "SLB", "EOG", "COP", "MPC", "VLO"],
-    "Materials": ["LIN", "APD", "ECL", "SHW", "PPG", "DD", "DOW"],
-    "Utilities": ["NEE", "DUK", "SO", "AEP", "SRE", "D"],
-    "Real Estate": ["AMT", "PLD", "EQIX", "PSA", "WELL", "SPG"],
-    "Communication": ["T", "VZ", "CMCSA", "DIS", "NFLX"],
-    "Consumer Staples": ["PG", "KO", "PEP", "CL", "CHD"]
+    "Technology": [
+        "AAPL", "MSFT", "NVDA", "CRM", "ADBE", "ORCL", "INTC", "AMD", "QCOM", "TXN",
+        "AVGO", "CSCO", "NOW", "INTU", "AMAT", "MU", "NXPI", "LRCX", "KLAC", "MCHP",
+        "SNPS", "CDNS", "ANSS", "FTNT", "PANW", "CRWD", "ZS", "NET", "DDOG", "TEAM",
+        "DOCN", "ESTC", "MDB", "SNOW", "PLTR", "AI",
+    ],
+    "Finance": [
+        "JPM", "BAC", "WFC", "GS", "MS", "C", "BLK", "SCHW", "AXP", "COF",
+        "USB", "TFC", "PNC", "BK", "STT", "MTB", "CFG", "HBAN", "KEY", "ZION",
+        "V", "MA", "PYPL", "SQ", "FIS", "FISV", "GPN", "FLYW", "AFRM", "BILL",
+    ],
+    "Healthcare": [
+        "JNJ", "UNH", "PFE", "ABBV", "MRK", "LLY", "TMO", "ABT", "DHR", "BMY",
+        "AMGN", "GILD", "BIIB", "VRTX", "REGN", "ILMN", "ALXN", "BMRN", "SGEN", "FOLD",
+        "TDOC",
+    ],
+    "Consumer": [
+        "HD", "NKE", "SBUX", "MCD", "LOW", "TJX", "ROST",
+        "DG", "DLTR", "BBY", "TSCO", "AZO", "ORLY", "AAP", "KMX", "AN", "LAD",
+        "AMZN",
+    ],
+    "Consumer Staples": [
+        "WMT", "COST", "TGT", "PG", "KO", "PEP", "CL", "CHD", "CLX", "KMB",
+        "HRL", "SJM", "CAG", "GIS", "K", "CPB", "HSY", "MDLZ", "TSN", "BG",
+    ],
+    "Industrial": [
+        "BA", "CAT", "GE", "HON", "RTX", "LMT", "NOC", "GD", "TDG",
+        "EMR", "ETN", "IR", "PH", "ROK", "AME", "GGG", "ITW", "SWK", "FAST",
+    ],
+    "Energy": [
+        "XOM", "CVX", "SLB", "EOG", "COP", "MPC", "VLO", "PSX", "HAL", "OXY",
+        "FANG", "DVN", "CTRA", "MRO", "APA", "NOV", "FTI", "HP", "NBR", "RIG",
+    ],
+    "Materials": [
+        "LIN", "APD", "ECL", "SHW", "PPG", "DD", "DOW", "FCX", "NEM", "VALE",
+        "AA", "X", "CLF", "STLD", "NUE", "CMC", "RS", "WOR", "ATI", "ZEUS",
+    ],
+    "Utilities": [
+        "NEE", "DUK", "SO", "AEP", "SRE", "D", "EXC", "XEL", "WEC", "ES",
+        "PEG", "ETR", "FE", "AEE", "CMS", "LNT", "ATO", "NI", "CNP", "ED",
+    ],
+    "Real Estate": [
+        "AMT", "PLD", "EQIX", "PSA", "WELL", "SPG", "O", "AVB", "EQR", "UDR",
+        "MAA", "ESS", "CPT", "AIV", "BXP", "VTR", "PEAK", "HST", "HCP", "REG",
+    ],
+    "Communication": [
+        "GOOGL", "GOOG", "META", "T", "VZ", "CMCSA", "DIS", "NFLX",
+        "TWTR", "SNAP", "PINS",
+    ],
 }
 
 # Reverse mapping: ticker -> sector

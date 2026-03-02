@@ -1,95 +1,112 @@
 """
-Portfolio Optimizer
-Forward-looking portfolio optimization using factor-based expected returns
-and Modern Portfolio Theory.
+Portfolio Optimizer — forward-looking optimisation using macro-aware expected
+returns and Modern Portfolio Theory.
 
 Key principles:
-- Expected returns are derived from fundamental quality scores (forward-looking),
-  NOT from past price performance (backward-looking)
-- All selected stocks receive a minimum allocation
-- Optimization maximizes risk-adjusted returns (Sharpe ratio)
+  - Expected returns are derived from a multi-component model grounded in
+    Gordon Growth decomposition, FRED macro-regime detection, and valuation
+    mean reversion — **not** from past price performance.
+  - Macro data (yield curve, inflation, unemployment) from FRED drives
+    regime classification and sector-level return adjustments.
+  - All selected stocks receive a minimum allocation.
+  - Optimisation maximises risk-adjusted returns (Sharpe ratio) by default,
+    with support for min-risk and max-return objectives.
 """
 
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Optional
 import numpy as np
 from scipy.optimize import minimize
+import logging
 import warnings
-warnings.filterwarnings('ignore')
 
-# Market assumptions
-RISK_FREE_RATE = 0.045      # ~4.5% current T-bill rate
-EQUITY_RISK_PREMIUM = 0.055  # ~5.5% long-term equity risk premium
-MARKET_RETURN = RISK_FREE_RATE + EQUITY_RISK_PREMIUM  # ~10%
+warnings.filterwarnings("ignore")
+logger = logging.getLogger(__name__)
 
+
+# ---------------------------------------------------------------------------
+# Lazy-loaded expected return model singleton
+# ---------------------------------------------------------------------------
+
+_return_model = None
+
+
+def _get_return_model():
+    """Lazy-load the ExpectedReturnModel (and its FRED macro state)."""
+    global _return_model
+    if _return_model is None:
+        from expected_return_model import ExpectedReturnModel
+        _return_model = ExpectedReturnModel()
+        # refresh_macro() is called lazily on first use inside the model
+    return _return_model
+
+
+# ---------------------------------------------------------------------------
+# PortfolioOptimizer
+# ---------------------------------------------------------------------------
 
 class PortfolioOptimizer:
     """
-    Portfolio optimization using factor-based expected returns and MPT.
+    Portfolio optimisation using macro-aware expected returns and MPT.
+
+    The expected return model:
+      1. Fetches macro indicators from FRED (yield curve, inflation,
+         unemployment, NFCI, credit spreads).
+      2. Classifies macro regime (Expansion / LateCycle / Recession / Recovery).
+      3. Computes market expected return (risk-free + regime-adjusted ERP).
+      4. Decomposes each stock's E[R] into: market baseline, cash yield,
+         growth, valuation reversion, macro sector tilt, beta risk
+         compensation, and factor alpha overlay.
+      5. Clamps to configurable bounds (default −5 % to +30 %).
+
+    The SLSQP optimiser then finds weights that maximise the Sharpe ratio
+    (or minimise risk / maximise return) subject to min/max weight bounds.
     """
+
+    # == Macro management ====================================================
+
+    @staticmethod
+    def refresh_macro_data(force: bool = False):
+        """
+        Refresh macro data used for expected returns.
+
+        Call on server startup or periodically (daily / weekly).
+        """
+        model = _get_return_model()
+        model.refresh_macro(force=force)
+        logger.info("Macro data refreshed for portfolio optimizer.")
+
+    # == Per-stock expected return ===========================================
 
     @staticmethod
     def _stock_expected_return(stock: Dict[str, Any]) -> float:
         """
-        Calculate forward-looking expected return for a single stock.
-        
-        Uses a factor-based model:
-        - Base = risk-free rate + equity risk premium
-        - Valuation alpha: undervalued stocks (high valuation score) get higher expected returns
-        - Quality alpha: strong fundamentals get a premium
-        - Sentiment tilt: positive sentiment gives a small forward boost
-        - Momentum tilt: small tilt for recent trend continuation
-        - Risk discount: higher-risk stocks need higher return to compensate
-        
-        A stock with average scores (50/100) gets approximately the market return (~10%).
-        Score 80 → ~15-16%. Score 20 → ~5-6%.
+        Forward-looking expected return for a single stock (scalar, decimal).
+
+        Delegates to the macro-aware ``ExpectedReturnModel``.
         """
-        scores = stock.get("factor_scores", {})
-        valuation = scores.get("valuation", 50.0)       # 0-100, higher = more undervalued
-        fundamentals = scores.get("fundamentals", 50.0)  # 0-100, higher = better quality
-        sentiment = scores.get("sentiment", 50.0)        # 0-100, higher = better sentiment
-        momentum = scores.get("momentum", 50.0)          # 0-100, higher = stronger trend
-        risk = scores.get("risk", 50.0)                  # 0-100, higher = LOWER risk
-
-        # Normalize scores to [-1, 1] range (50 is neutral)
-        val_z = (valuation - 50) / 50
-        fund_z = (fundamentals - 50) / 50
-        sent_z = (sentiment - 50) / 50
-        mom_z = (momentum - 50) / 50
-        risk_z = (risk - 50) / 50  # positive = lower risk
-
-        # Factor premiums (annual, in decimal)
-        # Undervalued stocks should outperform (value premium)
-        valuation_premium = val_z * 0.04       # ±4% max from valuation
-        # High-quality fundamentals earn a premium
-        quality_premium = fund_z * 0.025       # ±2.5% max from quality
-        # Positive sentiment suggests near-term outperformance
-        sentiment_premium = sent_z * 0.015     # ±1.5% max from sentiment
-        # Momentum: trend continuation (small factor, mean-reverts)
-        momentum_premium = mom_z * 0.01        # ±1% max from momentum
-        # Risk premium: riskier stocks (low risk score) should have higher expected returns
-        risk_premium = -risk_z * 0.02          # ±2% (higher risk → higher expected return)
-
-        expected = (MARKET_RETURN 
-                    + valuation_premium 
-                    + quality_premium 
-                    + sentiment_premium 
-                    + momentum_premium 
-                    + risk_premium)
-
-        # Floor and cap at reasonable bounds
-        expected = max(0.02, min(0.25, expected))  # 2% to 25% annualized
-
-        return expected
+        model = _get_return_model()
+        components = model.stock_expected_return(stock)
+        return components.total
 
     @staticmethod
-    def calculate_expected_returns(stocks: List[Dict[str, Any]],
-                                   weights: Optional[Dict[str, float]] = None) -> float:
-        """Calculate weighted portfolio expected return."""
+    def _stock_expected_return_components(stock: Dict[str, Any]) -> dict:
+        """Full decomposition dict for a stock (for transparency/debugging)."""
+        model = _get_return_model()
+        components = model.stock_expected_return(stock)
+        return components.to_dict()
+
+    # == Portfolio-level expected return ======================================
+
+    @staticmethod
+    def calculate_expected_returns(
+        stocks: List[Dict[str, Any]],
+        weights: Optional[Dict[str, float]] = None,
+    ) -> float:
+        """Weighted portfolio expected return (decimal)."""
         if not stocks:
             return 0.0
         if weights is None:
             weights = {s["ticker"]: 1.0 / len(stocks) for s in stocks}
-
         total = 0.0
         for stock in stocks:
             w = weights.get(stock["ticker"], 0.0)
@@ -97,17 +114,27 @@ class PortfolioOptimizer:
         return total
 
     @staticmethod
-    def _get_stock_expected_returns_vector(stocks: List[Dict[str, Any]]) -> np.ndarray:
-        """Get expected returns as a numpy array (for optimization)."""
-        return np.array([PortfolioOptimizer._stock_expected_return(s) for s in stocks])
+    def _get_stock_expected_returns_vector(
+        stocks: List[Dict[str, Any]],
+    ) -> np.ndarray:
+        """Expected returns as a numpy array (for optimisation internals)."""
+        return np.array(
+            [PortfolioOptimizer._stock_expected_return(s) for s in stocks]
+        )
+
+    # == Volatility ==========================================================
 
     @staticmethod
-    def calculate_portfolio_volatility(stocks: List[Dict[str, Any]],
-                                       weights: Optional[Dict[str, float]] = None,
-                                       correlation_matrix: Optional[np.ndarray] = None) -> float:
+    def calculate_portfolio_volatility(
+        stocks: List[Dict[str, Any]],
+        weights: Optional[Dict[str, float]] = None,
+        correlation_matrix: Optional[np.ndarray] = None,
+    ) -> float:
         """
-        Calculate portfolio volatility (annualized).
-        volatility_90d in the data is ALREADY annualized (std * sqrt(252) * 100).
+        Annualised portfolio volatility.
+
+        ``volatility_90d`` in the data is **already** annualised
+        (std × √252 × 100).  Correlation model: 0.6 same-sector, 0.4 cross.
         """
         if not stocks:
             return 0.0
@@ -120,13 +147,9 @@ class PortfolioOptimizer:
 
         if correlation_matrix is None:
             n = len(stocks)
-            # Assume moderate intra-sector correlation (0.5) and cross-sector (0.3)
-            # Simplified: uniform 0.4 correlation
             rho = 0.4
             correlation_matrix = np.full((n, n), rho)
             np.fill_diagonal(correlation_matrix, 1.0)
-
-            # Boost correlation for same-sector pairs
             sectors = [s.get("sector", "Other") for s in stocks]
             for i in range(n):
                 for j in range(i + 1, n):
@@ -138,33 +161,50 @@ class PortfolioOptimizer:
         port_var = w @ cov @ w
         return float(np.sqrt(max(port_var, 0.0)))
 
+    # == Sharpe ==============================================================
+
     @staticmethod
-    def calculate_sharpe_ratio(stocks: List[Dict[str, Any]],
-                                weights: Optional[Dict[str, float]] = None) -> float:
-        """Sharpe ratio = (expected return - risk free) / volatility."""
+    def calculate_sharpe_ratio(
+        stocks: List[Dict[str, Any]],
+        weights: Optional[Dict[str, float]] = None,
+    ) -> float:
+        """Sharpe ratio using the macro-derived risk-free rate."""
+        model = _get_return_model()
+        model._ensure_initialized()
+        risk_free = (
+            model._market.risk_free_rate if model._market else 0.045
+        )
+
         er = PortfolioOptimizer.calculate_expected_returns(stocks, weights)
         vol = PortfolioOptimizer.calculate_portfolio_volatility(stocks, weights)
         if vol == 0:
             return 0.0
-        return (er - RISK_FREE_RATE) / vol
+        return (er - risk_free) / vol
+
+    # == Optimisation ========================================================
 
     @staticmethod
-    def optimize_portfolio(stocks: List[Dict[str, Any]],
-                           objective: str = "sharpe",
-                           constraints: Optional[Dict[str, Any]] = None) -> Dict[str, float]:
+    def optimize_portfolio(
+        stocks: List[Dict[str, Any]],
+        objective: str = "sharpe",
+        constraints: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, float]:
         """
-        Optimize portfolio weights.
+        Optimise portfolio weights using SciPy SLSQP.
 
-        ALL selected stocks receive at least a minimum weight.
-        The optimizer overweights the best risk-adjusted stocks.
+        **All** selected stocks receive at least a minimum weight so the
+        optimiser cannot zero-out any of the user's picks.
 
-        Args:
-            stocks: List of stock data
-            objective: "sharpe", "min_risk", or "max_return"
-            constraints: Dict with max_weight, min_weight
+        Parameters
+        ----------
+        stocks : list of dict
+        objective : ``"sharpe"`` | ``"min_risk"`` | ``"max_return"``
+        constraints : dict, optional
+            Keys: ``min_weight``, ``max_weight`` (decimals).
 
-        Returns:
-            Dictionary of ticker -> optimized weight
+        Returns
+        -------
+        dict  { ticker → weight (decimal, sums to 1) }
         """
         if not stocks:
             return {}
@@ -176,30 +216,25 @@ class PortfolioOptimizer:
         if constraints is None:
             constraints = {}
 
-        # Ensure every selected stock gets at least some weight
-        # Default min: half of equal weight (so all stocks participate)
         default_min = max(0.01, equal_weight * 0.3)
         min_w = constraints.get("min_weight", default_min)
-        # Ensure min_weight * n <= 1.0
         if min_w * n > 1.0:
             min_w = 1.0 / n
 
         max_w = constraints.get("max_weight", min(0.25, 1.0))
-        # Ensure max_weight * n >= 1.0 (feasible)
         if max_w * n < 1.0:
             max_w = 1.0 / n
 
         x0 = np.ones(n) / n
         bounds = [(min_w, max_w)] * n
-
-        # Weights must sum to 1
         eq_constraint = {"type": "eq", "fun": lambda x: np.sum(x) - 1.0}
 
-        # Pre-compute expected returns vector for efficiency
         er_vec = PortfolioOptimizer._get_stock_expected_returns_vector(stocks)
 
-        # Build covariance matrix once
-        vols = np.array([s.get("volatility_90d", 20.0) / 100.0 for s in stocks])
+        # Build covariance matrix
+        vols = np.array(
+            [s.get("volatility_90d", 20.0) / 100.0 for s in stocks]
+        )
         sectors = [s.get("sector", "Other") for s in stocks]
         rho = 0.4
         corr = np.full((n, n), rho)
@@ -211,6 +246,13 @@ class PortfolioOptimizer:
                     corr[j, i] = 0.6
         cov = np.outer(vols, vols) * corr
 
+        # Risk-free rate from macro model
+        model = _get_return_model()
+        model._ensure_initialized()
+        risk_free = (
+            model._market.risk_free_rate if model._market else 0.045
+        )
+
         def port_return(w):
             return float(w @ er_vec)
 
@@ -218,7 +260,7 @@ class PortfolioOptimizer:
             return float(np.sqrt(max(w @ cov @ w, 1e-10)))
 
         def neg_sharpe(w):
-            return -(port_return(w) - RISK_FREE_RATE) / port_vol(w)
+            return -(port_return(w) - risk_free) / port_vol(w)
 
         if objective == "sharpe":
             obj_func = neg_sharpe
@@ -231,39 +273,69 @@ class PortfolioOptimizer:
 
         try:
             result = minimize(
-                obj_func, x0,
+                obj_func,
+                x0,
                 method="SLSQP",
                 bounds=bounds,
                 constraints=[eq_constraint],
-                options={"maxiter": 2000, "ftol": 1e-10}
+                options={"maxiter": 2000, "ftol": 1e-10},
             )
 
             if result.success:
                 weights = {tickers[i]: float(result.x[i]) for i in range(n)}
-                # Normalize
                 total = sum(weights.values())
                 if total > 0:
                     weights = {k: v / total for k, v in weights.items()}
                 return weights
             else:
-                print(f"[Optimizer] Did not converge: {result.message}. Using equal weights.")
+                logger.warning(
+                    "Optimizer did not converge: %s. Using equal weights.",
+                    result.message,
+                )
                 return {t: equal_weight for t in tickers}
-        except Exception as e:
-            print(f"[Optimizer] Error: {e}. Using equal weights.")
+
+        except Exception as exc:
+            logger.warning("Optimizer error: %s. Using equal weights.", exc)
             return {t: equal_weight for t in tickers}
 
-    @staticmethod
-    def analyze_portfolio(stocks: List[Dict[str, Any]],
-                          weights: Dict[str, float]) -> Dict[str, Any]:
-        """
-        Comprehensive portfolio analysis.
-        """
-        expected_return = PortfolioOptimizer.calculate_expected_returns(stocks, weights)
-        volatility = PortfolioOptimizer.calculate_portfolio_volatility(stocks, weights)
-        sharpe = PortfolioOptimizer.calculate_sharpe_ratio(stocks, weights)
+    # == Portfolio analysis ===================================================
 
-        # Sector allocation
-        sector_alloc = {}
+    @staticmethod
+    def analyze_portfolio(
+        stocks: List[Dict[str, Any]],
+        weights: Dict[str, float],
+    ) -> Dict[str, Any]:
+        """
+        Comprehensive portfolio analysis with expected-return decomposition.
+
+        Returns a dict with:
+          - Portfolio metrics (E[R], vol, Sharpe, HHI, etc.)
+          - Sector allocation
+          - Per-stock expected-return breakdowns (7 components each)
+          - Portfolio-level return decomposition
+          - Macro regime information
+          - Methodology description
+        """
+        model = _get_return_model()
+        model._ensure_initialized()
+        risk_free = (
+            model._market.risk_free_rate if model._market else 0.045
+        )
+
+        expected_return = PortfolioOptimizer.calculate_expected_returns(
+            stocks, weights
+        )
+        volatility = PortfolioOptimizer.calculate_portfolio_volatility(
+            stocks, weights
+        )
+        sharpe = (
+            (expected_return - risk_free) / volatility
+            if volatility > 0
+            else 0.0
+        )
+
+        # -- Sector allocation ------------------------------------------------
+        sector_alloc: Dict[str, float] = {}
         for stock in stocks:
             t = stock["ticker"]
             w = weights.get(t, 0.0)
@@ -273,38 +345,72 @@ class PortfolioOptimizer:
         num_holdings = sum(1 for w in weights.values() if w > 0.001)
         herfindahl = sum(w ** 2 for w in weights.values())
 
-        # Show ALL holdings sorted by weight
         sorted_w = sorted(weights.items(), key=lambda x: x[1], reverse=True)
         all_holdings = [
             {"ticker": t, "weight": round(w * 100, 2)}
-            for t, w in sorted_w if w > 0.001
+            for t, w in sorted_w
+            if w > 0.001
         ]
 
-        # Per-stock expected returns for transparency
+        # -- Per-stock detail with component breakdown ------------------------
         stock_details = []
         for stock in stocks:
             t = stock["ticker"]
             w = weights.get(t, 0.0)
-            er = PortfolioOptimizer._stock_expected_return(stock)
+            comp = PortfolioOptimizer._stock_expected_return_components(stock)
+
             stock_details.append({
                 "ticker": t,
                 "weight": round(w * 100, 2),
-                "expected_return": round(er * 100, 2),
+                "expected_return": round(comp["total"] * 100, 2),
+                "return_components": {
+                    "market_baseline":      round(comp["market_return"] * 100, 2),
+                    "cash_yield":           round(comp["cash_yield_premium"] * 100, 2),
+                    "growth":               round(comp["growth_premium"] * 100, 2),
+                    "valuation_reversion":  round(comp["multiple_reversion"] * 100, 2),
+                    "macro_adjustment":     round(comp["macro_adjustment"] * 100, 2),
+                    "risk_premium":         round(comp["risk_adjustment"] * 100, 2),
+                    "factor_tilt":          round(comp["factor_tilt"] * 100, 2),
+                },
                 "volatility": round(stock.get("volatility_90d", 0), 1),
                 "composite_score": round(stock.get("composite_score", 0), 1),
-                "sector": stock.get("sector", "Other")
+                "sector": stock.get("sector", "Other"),
             })
         stock_details.sort(key=lambda x: x["weight"], reverse=True)
+
+        # -- Portfolio-level return decomposition -----------------------------
+        port_decomp = model.portfolio_expected_return(stocks, weights)
+
+        # -- Regime info ------------------------------------------------------
+        regime_info = (
+            model.regime.to_dict() if model.regime else {"state": "Unknown"}
+        )
 
         return {
             "expected_return": round(expected_return * 100, 2),
             "volatility": round(volatility * 100, 2),
             "sharpe_ratio": round(sharpe, 3),
+            "risk_free_rate": round(risk_free * 100, 2),
             "num_holdings": num_holdings,
             "concentration_index": round(herfindahl, 4),
-            "sector_allocation": {k: round(v * 100, 2) for k, v in sector_alloc.items()},
+            "sector_allocation": {
+                k: round(v * 100, 2) for k, v in sector_alloc.items()
+            },
             "top_holdings": all_holdings,
             "stock_details": stock_details,
-            "weights": {k: round(v * 100, 2) for k, v in weights.items()},
-            "methodology": "Factor-based expected returns using valuation, quality, sentiment, momentum, and risk scores. Not based on past price performance."
+            "weights": {
+                k: round(v * 100, 2) for k, v in weights.items()
+            },
+            "macro_regime": regime_info,
+            "return_decomposition": {
+                k: round(v * 100, 2) if isinstance(v, float) else v
+                for k, v in port_decomp.get("components", {}).items()
+            },
+            "methodology": (
+                "Macro-aware expected returns using Gordon Growth decomposition "
+                "(yield + growth + valuation reversion), FRED-based regime "
+                "detection (yield curve, inflation, unemployment), sector-level "
+                "macro tilts, and beta risk compensation.  "
+                "3-year investment horizon."
+            ),
         }
