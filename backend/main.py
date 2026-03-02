@@ -13,6 +13,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 import base64
 import io
+import numpy as np
 
 # Add paths for imports
 sys.path.insert(0, str(Path(__file__).parent.parent / "quantcademy-app"))
@@ -2115,6 +2116,352 @@ async def get_user_stats(user_id: str):
             "average_score": 0,
             "modules_completed": 0
         }
+
+
+# =============================================================================
+# AI Stock Discovery & Asset Allocation Endpoints
+# =============================================================================
+
+# Import asset allocation modules
+from stock_universe_analyzer import StockUniverseAnalyzer, SP500_TICKERS
+from sector_normalizer import SectorNormalizer
+from stock_scorer import StockScorer
+from portfolio_optimizer import PortfolioOptimizer
+
+# Analysis job tracking
+_analysis_jobs: Dict[str, Dict[str, Any]] = {}
+_universe_cache: Optional[Dict[str, Any]] = None
+_universe_cache_time: Optional[datetime] = None
+_CACHE_TTL_HOURS = 24
+
+def _load_cache_from_file():
+    """Load cached analysis from file if it exists."""
+    global _universe_cache, _universe_cache_time
+    cache_file = Path(__file__).parent / "cache" / "sp500_analysis.json"
+    if cache_file.exists():
+        try:
+            with open(cache_file, 'r') as f:
+                import json
+                data = json.load(f)
+                _universe_cache = data
+                # Parse timestamp
+                if "timestamp" in data:
+                    _universe_cache_time = datetime.fromisoformat(data["timestamp"])
+                else:
+                    # Use file modification time
+                    _universe_cache_time = datetime.fromtimestamp(cache_file.stat().st_mtime)
+                print(f"[Cache] Loaded {len(data.get('stocks', []))} stocks from cache file")
+        except Exception as e:
+            print(f"[Cache] Failed to load cache file: {e}")
+
+# Load cache on module import (before endpoints are defined)
+_load_cache_from_file()
+
+
+class AnalyzeUniverseRequest(BaseModel):
+    tickers: Optional[List[str]] = None  # If None, analyzes all S&P 500
+
+
+class AnalyzeUniverseResponse(BaseModel):
+    job_id: str
+    estimated_time_minutes: int
+    message: str
+
+
+class AnalysisStatusResponse(BaseModel):
+    job_id: str
+    status: str  # "running", "completed", "failed"
+    progress: int  # 0-100
+    current_ticker: Optional[str] = None
+    completed: int
+    total: int
+    results: Optional[Dict[str, Any]] = None
+    error: Optional[str] = None
+
+
+class StockUniverseResultsResponse(BaseModel):
+    stocks: List[Dict[str, Any]]
+    sectors: Dict[str, Dict[str, Any]]
+    stats: Dict[str, Any]
+    last_updated: str
+    total_analyzed: int
+
+
+class OptimizePortfolioRequest(BaseModel):
+    tickers: List[str]
+    objective: str = "sharpe"  # "sharpe", "min_risk", "max_return"
+    constraints: Optional[Dict[str, Any]] = None
+    custom_weights: Optional[Dict[str, float]] = None  # If provided, uses these instead of optimizing
+
+
+class PortfolioAnalysisResponse(BaseModel):
+    weights: Dict[str, float]
+    analysis: Dict[str, Any]
+    stocks: List[Dict[str, Any]]
+
+
+@app.post("/api/ai/stock-universe/analyze", response_model=AnalyzeUniverseResponse)
+async def analyze_universe(request: AnalyzeUniverseRequest):
+    """Trigger S&P 500 stock universe analysis."""
+    global _analysis_jobs
+    
+    polygon_key = os.environ.get('POLYGON_API_KEY')
+    if not polygon_key:
+        raise HTTPException(status_code=500, detail="Polygon API key not configured")
+    
+    from polygon import RESTClient
+    client = RESTClient(polygon_key)
+    
+    analyzer = StockUniverseAnalyzer(client)
+    
+    tickers = request.tickers or SP500_TICKERS
+    job_id = f"analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    
+    # Estimate time (roughly 2-3 seconds per stock)
+    estimated_minutes = len(tickers) * 3 / 60
+    
+    # Start analysis in background
+    _analysis_jobs[job_id] = {
+        "status": "running",
+        "progress": 0,
+        "completed": 0,
+        "total": len(tickers),
+        "current_ticker": None,
+        "results": None,
+        "error": None
+    }
+    
+    async def run_analysis():
+        try:
+            def progress_callback(current, total, ticker):
+                _analysis_jobs[job_id]["progress"] = int((current / total) * 100)
+                _analysis_jobs[job_id]["completed"] = current
+                _analysis_jobs[job_id]["current_ticker"] = ticker
+            
+            # Run analysis
+            results = analyzer.analyze_universe(tickers, progress_callback)
+            
+            # Normalize by sector
+            normalized_stocks = SectorNormalizer.normalize_all_metrics(results["stocks"])
+            
+            # Score all stocks
+            scored_stocks = StockScorer.score_all_stocks(normalized_stocks)
+            
+            # Calculate sector stats
+            sectors = {}
+            for stock in scored_stocks:
+                sector = stock["sector"]
+                if sector not in sectors:
+                    sectors[sector] = {
+                        "count": 0,
+                        "avg_score": 0.0,
+                        "top_stocks": []
+                    }
+                sectors[sector]["count"] += 1
+                sectors[sector]["avg_score"] += stock["composite_score"]
+            
+            for sector in sectors:
+                sectors[sector]["avg_score"] /= sectors[sector]["count"]
+                # Get top 5 stocks in sector
+                sector_stocks = [s for s in scored_stocks if s["sector"] == sector]
+                sector_stocks.sort(key=lambda x: x["composite_score"], reverse=True)
+                sectors[sector]["top_stocks"] = [
+                    {"ticker": s["ticker"], "score": s["composite_score"]}
+                    for s in sector_stocks[:5]
+                ]
+            
+            # Overall stats
+            scores = [s["composite_score"] for s in scored_stocks]
+            stats = {
+                "avg_score": float(np.mean(scores)),
+                "median_score": float(np.median(scores)),
+                "min_score": float(np.min(scores)),
+                "max_score": float(np.max(scores)),
+                "std_score": float(np.std(scores))
+            }
+            
+            # Deduplicate by ticker (keep first occurrence)
+            seen_tickers = set()
+            unique_stocks = []
+            for s in scored_stocks:
+                if s["ticker"] not in seen_tickers:
+                    seen_tickers.add(s["ticker"])
+                    unique_stocks.append(s)
+            scored_stocks = unique_stocks
+            
+            final_results = {
+                "stocks": scored_stocks,
+                "sectors": sectors,
+                "stats": stats,
+                "timestamp": datetime.now().isoformat(),
+                "total_analyzed": len(scored_stocks)
+            }
+            
+            # Update cache (both in-memory and file)
+            global _universe_cache, _universe_cache_time
+            _universe_cache = final_results
+            _universe_cache_time = datetime.now()
+            
+            # Also save to file for persistence across server restarts
+            cache_dir = Path(__file__).parent / "cache"
+            cache_dir.mkdir(exist_ok=True)
+            cache_file = cache_dir / "sp500_analysis.json"
+            with open(cache_file, 'w') as f:
+                import json
+                json.dump(final_results, f, indent=2)
+            
+            _analysis_jobs[job_id]["status"] = "completed"
+            _analysis_jobs[job_id]["progress"] = 100
+            _analysis_jobs[job_id]["results"] = final_results
+            
+        except Exception as e:
+            _analysis_jobs[job_id]["status"] = "failed"
+            _analysis_jobs[job_id]["error"] = str(e)
+            import traceback
+            traceback.print_exc()
+    
+    # Run in background
+    import asyncio
+    asyncio.create_task(run_analysis())
+    
+    return AnalyzeUniverseResponse(
+        job_id=job_id,
+        estimated_time_minutes=int(estimated_minutes),
+        message=f"Analysis started for {len(tickers)} stocks"
+    )
+
+
+@app.get("/api/ai/stock-universe/status/{job_id}", response_model=AnalysisStatusResponse)
+async def get_analysis_status(job_id: str):
+    """Get analysis job status."""
+    if job_id not in _analysis_jobs:
+        raise HTTPException(status_code=404, detail="Job not found")
+    
+    job = _analysis_jobs[job_id]
+    
+    return AnalysisStatusResponse(
+        job_id=job_id,
+        status=job["status"],
+        progress=job["progress"],
+        current_ticker=job.get("current_ticker"),
+        completed=job["completed"],
+        total=job["total"],
+        results=job.get("results"),
+        error=job.get("error")
+    )
+
+
+@app.get("/api/ai/stock-universe/results", response_model=StockUniverseResultsResponse)
+async def get_universe_results(
+    sector: Optional[str] = None,
+    min_score: Optional[float] = None,
+    max_score: Optional[float] = None,
+    limit: int = 500,
+    sort_by: str = "composite_score"
+):
+    """Get cached universe analysis results with filters."""
+    global _universe_cache, _universe_cache_time
+    
+    # Check cache
+    if _universe_cache is None or _universe_cache_time is None:
+        raise HTTPException(status_code=404, detail="No analysis results available. Run analysis first.")
+    
+    # Check cache age
+    cache_age = datetime.now() - _universe_cache_time
+    if cache_age.total_seconds() > _CACHE_TTL_HOURS * 3600:
+        raise HTTPException(status_code=410, detail="Cache expired. Please run new analysis.")
+    
+    stocks = _universe_cache["stocks"].copy()
+    
+    # Apply filters
+    if sector:
+        stocks = [s for s in stocks if s.get("sector") == sector]
+    
+    if min_score is not None:
+        stocks = [s for s in stocks if s.get("composite_score", 0) >= min_score]
+    
+    if max_score is not None:
+        stocks = [s for s in stocks if s.get("composite_score", 100) <= max_score]
+    
+    # Sort
+    if sort_by == "composite_score":
+        stocks.sort(key=lambda x: x.get("composite_score", 0), reverse=True)
+    elif sort_by == "ticker":
+        stocks.sort(key=lambda x: x.get("ticker", ""))
+    elif sort_by == "sector":
+        stocks.sort(key=lambda x: (x.get("sector", ""), -x.get("composite_score", 0)))
+    
+    # Limit
+    stocks = stocks[:limit]
+    
+    return StockUniverseResultsResponse(
+        stocks=stocks,
+        sectors=_universe_cache["sectors"],
+        stats=_universe_cache["stats"],
+        last_updated=_universe_cache_time.isoformat(),
+        total_analyzed=len(stocks)
+    )
+
+
+@app.get("/api/ai/stock-universe/stock/{ticker}")
+async def get_stock_details(ticker: str):
+    """Get detailed analysis for a single stock."""
+    global _universe_cache
+    
+    if _universe_cache is None:
+        raise HTTPException(status_code=404, detail="No analysis results available")
+    
+    stock = next((s for s in _universe_cache["stocks"] if s["ticker"] == ticker.upper()), None)
+    
+    if not stock:
+        raise HTTPException(status_code=404, detail=f"Stock {ticker} not found in analysis")
+    
+    return stock
+
+
+@app.post("/api/ai/asset-allocation/optimize", response_model=PortfolioAnalysisResponse)
+async def optimize_portfolio(request: OptimizePortfolioRequest):
+    """Optimize portfolio allocation from selected stocks."""
+    global _universe_cache
+    
+    if _universe_cache is None:
+        raise HTTPException(status_code=404, detail="No universe analysis available. Run analysis first.")
+    
+    # Get stock data for selected tickers
+    selected_stocks = []
+    for ticker in request.tickers:
+        stock = next((s for s in _universe_cache["stocks"] if s["ticker"] == ticker.upper()), None)
+        if stock:
+            selected_stocks.append(stock)
+    
+    if not selected_stocks:
+        raise HTTPException(status_code=400, detail="No valid stocks found for selected tickers")
+    
+    # Use custom weights if provided, otherwise optimize
+    if request.custom_weights:
+        weights = {k.upper(): v / 100.0 for k, v in request.custom_weights.items()}  # Convert % to decimal
+    else:
+        # Optimize
+        weights = PortfolioOptimizer.optimize_portfolio(
+            selected_stocks,
+            objective=request.objective,
+            constraints=request.constraints or {}
+        )
+    
+    # Analyze portfolio
+    analysis = PortfolioOptimizer.analyze_portfolio(selected_stocks, weights)
+    
+    return PortfolioAnalysisResponse(
+        weights={k: round(v * 100, 2) for k, v in weights.items()},  # Convert to percentage
+        analysis=analysis,
+        stocks=selected_stocks
+    )
+
+
+@app.post("/api/ai/asset-allocation/analyze")
+async def analyze_portfolio(request: OptimizePortfolioRequest):
+    """Analyze a portfolio with given weights (no optimization)."""
+    return await optimize_portfolio(request)  # Same endpoint, just requires custom_weights
 
 
 # =============================================================================

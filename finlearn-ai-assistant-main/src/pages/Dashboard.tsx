@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { HeroSection } from "@/components/HeroSection";
 import { LessonGrid } from "@/components/LessonGrid";
 import { ChatPanel } from "@/components/ChatPanel";
-import { LogOut, TrendingUp, BarChart3, Eye, LineChart, Brain, Trophy, Users, PieChart } from "lucide-react";
+import { LogOut, TrendingUp, BarChart3, Eye, LineChart, Brain, Trophy, Users, PieChart, Zap } from "lucide-react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -152,8 +152,23 @@ const Dashboard = () => {
               </button>
 
               <button
+                onClick={() => navigate("/ai-discovery")}
+                className="glass-card rounded-xl p-6 text-left hover:border-purple-400/40 transition-all group"
+              >
+                <div className="p-2.5 rounded-lg bg-purple-500/10 text-purple-400 w-fit mb-4 group-hover:shadow-lg group-hover:shadow-purple-500/20 transition-all">
+                  <Zap className="w-5 h-5" />
+                </div>
+                <h3 className="font-display text-lg font-semibold mb-2 group-hover:text-purple-400 transition-colors">
+                  AI Stock Discovery
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Deep S&P 500 analysis with sector-normalized scoring. Build custom indices.
+                </p>
+              </button>
+
+              <button
                 onClick={() => navigate("/etf-recommender")}
-                className="glass-card rounded-xl p-6 text-left hover:border-green-400/40 transition-all group md:col-span-2"
+                className="glass-card rounded-xl p-6 text-left hover:border-green-400/40 transition-all group"
               >
                 <div className="p-2.5 rounded-lg bg-green-500/10 text-green-400 w-fit mb-4 group-hover:shadow-lg group-hover:shadow-green-500/20 transition-all">
                   <PieChart className="w-5 h-5" />
