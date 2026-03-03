@@ -18,17 +18,24 @@ const Index = () => {
 
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        if (!data.session) throw new Error("Invalid email or password");
+        navigate("/dashboard");
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
+        // If email confirmation is required, user won't have a session yet
+        if (data.session) {
+          navigate("/dashboard");
+        } else {
+          setError("Check your email for a confirmation link to complete signup.");
+        }
       }
-      navigate("/dashboard");
     } catch (err: any) {
       setError(err.message);
     } finally {
