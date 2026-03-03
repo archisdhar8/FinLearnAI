@@ -29,10 +29,11 @@ export const Leaderboard = ({ moduleId, currentUserId }: LeaderboardProps) => {
 
   const fetchLeaderboard = async () => {
     setLoading(true);
+    const { API_URL } = await import("@/lib/api");
     try {
       const url = moduleId 
-        ? `http://localhost:8000/api/leaderboard?module_id=${moduleId}`
-        : `http://localhost:8000/api/leaderboard`;
+        ? `${API_URL}/api/leaderboard?module_id=${moduleId}`
+        : `${API_URL}/api/leaderboard`;
       
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch leaderboard');

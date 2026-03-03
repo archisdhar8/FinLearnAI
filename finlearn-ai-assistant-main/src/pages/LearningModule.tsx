@@ -71,8 +71,9 @@ export default function LearningModule() {
   }, [navigate, moduleId]);
 
   const loadProgress = async (uid: string) => {
+    const { API_URL } = await import("@/lib/api");
     try {
-      const response = await fetch(`http://localhost:8000/api/progress/${uid}`);
+      const response = await fetch(`${API_URL}/api/progress/${uid}`);
       if (response.ok) {
         const data = await response.json();
         const moduleProgress = data.progress[moduleId || ''] || {};
@@ -84,7 +85,7 @@ export default function LearningModule() {
     
     // Load quiz scores
     try {
-      const response = await fetch(`http://localhost:8000/api/quiz/scores/${uid}`);
+      const response = await fetch(`${API_URL}/api/quiz/scores/${uid}`);
       if (response.ok) {
         const data = await response.json();
         const scores: Record<string, number> = {};
@@ -103,8 +104,9 @@ export default function LearningModule() {
   const saveProgress = async (lessonId: string) => {
     if (!userId || !moduleId) return;
     
+    const { API_URL: progressUrl } = await import("@/lib/api");
     try {
-      await fetch('http://localhost:8000/api/progress', {
+      await fetch(`${progressUrl}/api/progress`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -124,8 +126,9 @@ export default function LearningModule() {
     
     const currentLesson = module?.lessons[currentLessonIndex];
     
+    const { API_URL: quizUrl } = await import("@/lib/api");
     try {
-      await fetch('http://localhost:8000/api/quiz/submit', {
+      await fetch(`${quizUrl}/api/quiz/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

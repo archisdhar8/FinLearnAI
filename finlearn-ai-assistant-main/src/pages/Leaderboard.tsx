@@ -65,7 +65,8 @@ export default function Leaderboard() {
       
       // Try to fetch real leaderboard data
       try {
-        const response = await fetch("http://localhost:8000/api/leaderboard");
+        const { API_URL } = await import("@/lib/api");
+        const response = await fetch(`${API_URL}/api/leaderboard`);
         if (response.ok) {
           const data = await response.json();
           if (data.length > 0) {
@@ -78,7 +79,7 @@ export default function Leaderboard() {
       
       // Fetch user's own stats
       try {
-        const statsResponse = await fetch(`http://localhost:8000/api/user-stats/${userId}`);
+        const statsResponse = await fetch(`${API_URL}/api/user-stats/${userId}`);
         if (statsResponse.ok) {
           const stats = await statsResponse.json();
           setUserStats(stats);

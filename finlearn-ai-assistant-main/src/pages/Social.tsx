@@ -59,7 +59,8 @@ export default function Social() {
       
       // Try to fetch real users from backend
       try {
-        const response = await fetch("http://localhost:8000/api/users");
+        const { API_URL } = await import("@/lib/api");
+        const response = await fetch(`${API_URL}/api/users`);
         if (response.ok) {
           const data = await response.json();
           if (data.length > 0) {

@@ -62,7 +62,8 @@ export default function ChartAnalyzer() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const apiResponse = await fetch("http://localhost:8000/api/analyze-chart", {
+      const { API_URL } = await import("@/lib/api");
+      const apiResponse = await fetch(`${API_URL}/api/analyze-chart`, {
         method: "POST",
         body: formData,
       });
@@ -356,7 +357,8 @@ export default function ChartAnalyzer() {
                         const formData = new FormData();
                         formData.append("file", file);
                         
-                        const apiResponse = await fetch("http://localhost:8000/api/xai", {
+                        const { API_URL: xaiUrl } = await import("@/lib/api");
+                        const apiResponse = await fetch(`${xaiUrl}/api/xai`, {
                           method: "POST",
                           body: formData,
                         });

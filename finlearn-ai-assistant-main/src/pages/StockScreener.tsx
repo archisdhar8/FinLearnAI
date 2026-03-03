@@ -102,7 +102,8 @@ interface StockData {
 // Fetch real stock data from backend with CV analysis
 const fetchStockData = async (tickers: string[]): Promise<StockData[]> => {
   try {
-    const response = await fetch("http://localhost:8000/api/stocks", {
+    const { API_URL } = await import("@/lib/api");
+    const response = await fetch(`${API_URL}/api/stocks`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ tickers }),

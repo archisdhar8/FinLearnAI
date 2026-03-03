@@ -120,7 +120,8 @@ export function ChatPanel({ defaultOpen = false }: ChatPanelProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8000/api/chat", {
+      const { API_URL } = await import("@/lib/api");
+      const response = await fetch(`${API_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: messageText }),

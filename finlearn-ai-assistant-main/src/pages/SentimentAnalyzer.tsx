@@ -42,7 +42,8 @@ const SentimentAnalyzer = () => {
     setResult(null);
     
     try {
-      const response = await fetch('http://localhost:8000/api/sentiment', {
+      const { API_URL } = await import("@/lib/api");
+      const response = await fetch(`${API_URL}/api/sentiment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ticker: ticker.toUpperCase() })
