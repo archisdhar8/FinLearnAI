@@ -34,12 +34,14 @@ OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3")
 GEMINI_AVAILABLE = False
 OLLAMA_AVAILABLE = False
 genai = None
+_gemini_client = None  # New SDK uses Client
 
-# Try new package first (google-genai)
+# Try new package first (google-genai) — uses Client API
 try:
-    import google.genai as genai
+    import google.genai as _genai_module
+    genai = _genai_module
     if GEMINI_API_KEY:
-        genai.configure(api_key=GEMINI_API_KEY)
+        _gemini_client = _genai_module.Client(api_key=GEMINI_API_KEY)
         GEMINI_AVAILABLE = True
 except (ImportError, AttributeError):
     # Fallback to old package name for compatibility
@@ -150,13 +152,22 @@ def check_llm_status() -> dict:
         "ollama_available": False
     }
     
-    if LLM_PROVIDER == "gemini" and GEMINI_AVAILABLE and genai is not None:
+    if LLM_PROVIDER == "gemini" and GEMINI_AVAILABLE:
         try:
-            model = genai.GenerativeModel(GEMINI_MODEL)
-            status["status"] = "online"
-            status["message"] = f"Gemini ({GEMINI_MODEL})"
-            status["available"] = True  # Add for compatibility
-            return status
+            if _gemini_client is not None:
+                # New SDK: use Client
+                _gemini_client.models.list()
+                status["status"] = "online"
+                status["message"] = f"Gemini ({GEMINI_MODEL})"
+                status["available"] = True
+                return status
+            elif genai is not None and hasattr(genai, 'GenerativeModel'):
+                # Old SDK: use GenerativeModel
+                model = genai.GenerativeModel(GEMINI_MODEL)
+                status["status"] = "online"
+                status["message"] = f"Gemini ({GEMINI_MODEL})"
+                status["available"] = True
+                return status
         except Exception as e:
             status["message"] = f"Gemini error: {str(e)}"
             status["available"] = False
@@ -286,15 +297,84 @@ def _chat_with_gemini(
     conversation_history: list = None,
     stream: bool = True
 ) -> Union[Generator[str, None, None], str]:
-    """Chat using Google Gemini."""
-    if genai is None:
-        error_msg = "❌ Gemini module not available. Install: pip install google-genai"
+    """Chat using Google Gemini (supports both new and old SDK)."""
+    
+    # Try new SDK (google-genai with Client) first
+    if _gemini_client is not None:
+        return _chat_with_gemini_new_sdk(message, conversation_history, stream)
+    
+    # Fallback to old SDK (google-generativeai with GenerativeModel)
+    if genai is not None and hasattr(genai, 'GenerativeModel'):
+        return _chat_with_gemini_old_sdk(message, conversation_history, stream)
+    
+    error_msg = "❌ Gemini module not available. Install: pip install google-genai"
+    if stream:
+        def error_gen():
+            yield error_msg
+        return error_gen()
+    return error_msg
+
+
+def _chat_with_gemini_new_sdk(
+    message: str,
+    conversation_history: list = None,
+    stream: bool = True
+) -> Union[Generator[str, None, None], str]:
+    """Chat using the new google-genai SDK (Client API)."""
+    try:
+        # Build contents with conversation history
+        contents = []
+        if SYSTEM_PROMPT:
+            contents.append({"role": "user", "parts": [{"text": f"[System] {SYSTEM_PROMPT}"}]})
+            contents.append({"role": "model", "parts": [{"text": "Understood. I will follow these instructions."}]})
+        
+        if conversation_history:
+            for msg in conversation_history[-6:]:
+                role = "user" if msg.get("role") == "user" else "model"
+                contents.append({
+                    "role": role,
+                    "parts": [{"text": msg.get("content", "")}]
+                })
+        
+        contents.append({"role": "user", "parts": [{"text": message}]})
+        
+        # Use the model name - strip "models/" prefix if present for the new SDK
+        model_name = GEMINI_MODEL
+        if model_name.startswith("models/"):
+            model_name = model_name[7:]
+        
+        if stream:
+            def generate():
+                response = _gemini_client.models.generate_content_stream(
+                    model=model_name,
+                    contents=contents
+                )
+                for chunk in response:
+                    if chunk.text:
+                        yield chunk.text
+            return generate()
+        else:
+            response = _gemini_client.models.generate_content(
+                model=model_name,
+                contents=contents
+            )
+            return response.text
+            
+    except Exception as e:
+        error_msg = f"❌ Gemini error: {str(e)}"
         if stream:
             def error_gen():
                 yield error_msg
             return error_gen()
         return error_msg
-    
+
+
+def _chat_with_gemini_old_sdk(
+    message: str,
+    conversation_history: list = None,
+    stream: bool = True
+) -> Union[Generator[str, None, None], str]:
+    """Chat using the old google-generativeai SDK (GenerativeModel API)."""
     try:
         model = genai.GenerativeModel(
             model_name=GEMINI_MODEL,
@@ -311,7 +391,6 @@ def _chat_with_gemini(
                     "parts": [msg.get("content", "")]
                 })
         
-        # Create chat session
         chat = model.start_chat(history=history)
         
         if stream:
