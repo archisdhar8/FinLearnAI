@@ -373,5 +373,380 @@
     "id": 75,
     "question": "What is the biggest mistake beginner investors make?",
     "answer": "The biggest mistake beginner investors make is reacting emotionally to short-term volatility. Panic selling, chasing trends, or overtrading can significantly reduce long-term returns.\n\nSuccessful investing relies on diversification, consistent contributions, and patience. Avoiding emotional decisions and maintaining a long-term perspective are key to achieving financial goals."
+  },
+  {
+    "id": 76,
+    "question": "What is the role of expectations in stock pricing?",
+    "answer": "Stock prices reflect expectations about future company performance rather than just current results. Investors constantly assess projected earnings, growth potential, and broader economic conditions. When expectations rise, stock prices often increase\u2014even if current earnings remain unchanged. Conversely, if expectations fall, prices can decline even when a company appears stable.\n\nBecause markets are forward-looking, prices often move before economic data fully confirms a trend. This is why markets can rise during economic slowdowns or fall during strong conditions. Understanding expectations helps investors interpret price movements more clearly and avoid assuming that current news alone determines value."
+  },
+  {
+    "id": 77,
+    "question": "Why do interest rates affect stock markets?",
+    "answer": "Interest rates influence borrowing costs for businesses and consumers. When rates rise, companies face higher costs to finance expansion, and consumers may reduce spending. This can slow economic growth and reduce corporate earnings, which may negatively impact stock prices.\n\nLower interest rates, on the other hand, make borrowing cheaper and can stimulate economic activity. They also make bonds less attractive relative to stocks, encouraging investors to seek higher returns in equities. Because of these effects, changes in interest rates often lead to shifts in market behavior."
+  },
+  {
+    "id": 78,
+    "question": "What is the relationship between risk and return?",
+    "answer": "Risk and return are generally linked: investments with higher potential returns usually carry higher uncertainty. Stocks, for example, tend to offer greater long-term growth potential but experience more volatility. Bonds typically provide lower returns but with less price fluctuation.\n\nInvestors must balance risk and return based on their goals and time horizon. Taking too little risk may limit growth, while taking too much may create unnecessary volatility. A well-structured portfolio aligns expected returns with a level of risk the investor can tolerate."
+  },
+  {
+    "id": 79,
+    "question": "What does it mean to \u201cprice in\u201d information?",
+    "answer": "When markets \u201cprice in\u201d information, it means that expectations about future events are already reflected in current stock prices. If investors expect strong earnings next quarter, that optimism may already be incorporated into the price before results are released.\n\nThis explains why stocks sometimes fall after reporting strong earnings\u2014if results were slightly below high expectations, prices may decline. Markets respond to changes in expectations rather than absolute results. Understanding this helps investors interpret price reactions more accurately."
+  },
+  {
+    "id": 80,
+    "question": "Why do markets sometimes react strongly to small news events?",
+    "answer": "Markets can react strongly when new information alters investor expectations. Even small pieces of news may shift perceptions about future growth or risk. Because prices reflect collective expectations, adjustments can occur quickly and sometimes dramatically.\n\nIn addition, automated trading and rapid information flow amplify reactions. While these moves may seem exaggerated, they reflect the speed at which markets process new data. Long-term investors benefit from recognizing that not all strong reactions have lasting effects."
+  },
+  {
+    "id": 81,
+    "question": "What is a market correction?",
+    "answer": "A market correction is typically defined as a decline of about 10% from recent highs. Corrections occur more frequently than bear markets and are considered normal within long-term trends. They often result from temporary economic concerns or shifts in sentiment.\n\nCorrections can feel alarming, but they historically resolve over time. They may even create opportunities for disciplined investors. Understanding corrections as routine helps reduce emotional responses during moderate declines."
+  },
+  {
+    "id": 82,
+    "question": "Why is diversification across sectors important?",
+    "answer": "Different sectors of the economy perform differently under various conditions. For example, technology companies may thrive during innovation cycles, while utilities may perform better during economic uncertainty. Concentrating in one sector increases exposure to sector-specific risks.\n\nDiversifying across sectors reduces reliance on any single industry. When one sector underperforms, another may outperform, stabilizing overall returns. This approach strengthens portfolio resilience over time."
+  },
+  {
+    "id": 83,
+    "question": "What is geographic diversification?",
+    "answer": "Geographic diversification involves investing in companies across multiple countries and regions. Economic growth and market conditions differ globally, meaning international investments may perform differently from domestic ones.\n\nBy including global exposure, investors reduce dependence on a single economy. This helps manage risk and capture opportunities in emerging and developed markets alike. Geographic diversification enhances long-term portfolio balance."
+  },
+  {
+    "id": 84,
+    "question": "Why can high returns sometimes signal higher risk?",
+    "answer": "High potential returns often indicate higher uncertainty or volatility. Investments promising unusually high growth may depend on optimistic assumptions or speculative behavior. Greater upside usually comes with greater downside risk.\n\nInvestors should evaluate whether potential returns justify the associated risk. Sustainable long-term growth typically results from disciplined diversification rather than chasing unusually high short-term gains."
+  },
+  {
+    "id": 85,
+    "question": "What is long-term market growth driven by?",
+    "answer": "Long-term market growth is primarily driven by economic expansion, corporate earnings growth, and innovation. As companies generate profits and reinvest in growth, their value tends to increase over time.\n\nPopulation growth, productivity improvements, and technological advancement also contribute to expansion. While short-term fluctuations occur, these long-term drivers historically support rising markets over decades."
+  },
+  {
+    "id": 86,
+    "question": "Why do downturns create opportunity?",
+    "answer": "Downturns lower asset prices, which can present opportunities for long-term investors to purchase investments at more attractive valuations. While uncertainty is high during declines, future growth potential may improve.\n\nHowever, this requires discipline and a long-term perspective. Attempting to time exact bottoms is difficult. Instead, consistent investing during downturns supports participation in eventual recoveries."
+  },
+  {
+    "id": 87,
+    "question": "What is behavioral bias in investing?",
+    "answer": "Behavioral biases are psychological tendencies that influence financial decisions. Examples include overconfidence, loss aversion, and herd behavior. These biases can lead to irrational investment choices.\n\nRecognizing biases helps investors remain disciplined and objective. Structured strategies such as diversification and automation reduce the impact of emotional decision-making."
+  },
+  {
+    "id": 88,
+    "question": "Why does media coverage influence markets?",
+    "answer": "Media coverage shapes public perception and can influence investor sentiment. Positive headlines may increase optimism, while negative stories can trigger fear. Rapid information sharing amplifies reactions.\n\nHowever, media focus is often short-term. Long-term investors benefit from distinguishing between temporary narratives and fundamental changes. Maintaining perspective reduces emotional responses."
+  },
+  {
+    "id": 89,
+    "question": "What is valuation in investing?",
+    "answer": "Valuation refers to assessing whether an asset\u2019s price is reasonable relative to its earnings, growth, or assets. Common measures include price-to-earnings ratios and revenue multiples.\n\nWhile valuation matters, it is only one factor in decision-making. Markets can remain overvalued or undervalued for extended periods. Balanced portfolios reduce reliance on valuation timing."
+  },
+  {
+    "id": 90,
+    "question": "Why can markets recover before the economy improves?",
+    "answer": "Markets are forward-looking and often anticipate economic recovery before data confirms it. Investors adjust expectations based on projected improvements rather than current conditions.\n\nThis means stock prices may rise even while unemployment remains high or economic reports appear weak. Understanding this helps investors avoid assuming that poor economic data guarantees continued market declines."
+  },
+  {
+    "id": 91,
+    "question": "Why is asset allocation more important than stock picking?",
+    "answer": "Asset allocation determines overall exposure to risk and growth potential. The mix between stocks, bonds, and other assets largely shapes portfolio performance and volatility.\n\nIndividual stock selection has less impact than overall allocation. A well-diversified allocation aligned with goals provides a stronger foundation than attempting to outperform through frequent selection."
+  },
+  {
+    "id": 92,
+    "question": "What is liquidity in investing?",
+    "answer": "Liquidity refers to how easily an asset can be bought or sold without significantly affecting its price. Highly liquid assets, like large stocks, trade quickly with minimal price disruption.\n\nLess liquid assets may take longer to sell or require price concessions. Liquidity matters when investors need access to funds or want flexibility in adjusting portfolios."
+  },
+  {
+    "id": 93,
+    "question": "Why does diversification not eliminate all risk?",
+    "answer": "Diversification reduces specific company or sector risk but does not remove overall market risk. When broad economic events occur, many assets may decline simultaneously.\n\nHowever, diversification still improves stability relative to concentrated positions. It reduces the impact of individual failures and enhances long-term consistency."
+  },
+  {
+    "id": 94,
+    "question": "What is a recession?",
+    "answer": "A recession is a significant decline in economic activity lasting several months or longer. It typically involves rising unemployment, reduced consumer spending, and lower business investment.\n\nRecessions often coincide with market downturns, but markets may begin recovering before economic indicators improve. Understanding this timing helps investors maintain perspective."
+  },
+  {
+    "id": 95,
+    "question": "Why is emotional discipline critical in investing?",
+    "answer": "Emotional discipline prevents impulsive decisions during market extremes. Fear and greed can lead to panic selling or speculative buying.\n\nMaintaining a structured plan reduces emotional influence. Discipline improves long-term outcomes by supporting consistent strategy execution."
+  },
+  {
+    "id": 96,
+    "question": "What is capital appreciation?",
+    "answer": "Capital appreciation refers to an increase in an investment\u2019s market value over time. When a stock\u2019s price rises above its purchase price, the investor experiences capital gains.\n\nCapital appreciation is a primary driver of long-term wealth growth. It complements income from dividends or interest."
+  },
+  {
+    "id": 97,
+    "question": "What is income investing?",
+    "answer": "Income investing focuses on generating regular payments from investments, such as dividends or bond interest. This approach may appeal to retirees or conservative investors.\n\nWhile income investing provides stability, it may offer lower growth potential. Balanced portfolios often combine income and growth strategies."
+  },
+  {
+    "id": 98,
+    "question": "Why does rebalancing enforce discipline?",
+    "answer": "Rebalancing restores target allocations after market movements shift percentages. This prevents portfolios from becoming too aggressive or too conservative.\n\nBy systematically adjusting allocations, investors avoid emotional timing decisions. Rebalancing reinforces strategic consistency."
+  },
+  {
+    "id": 99,
+    "question": "What is risk-adjusted return?",
+    "answer": "Risk-adjusted return measures how much return an investment generates relative to its risk. Higher returns are more meaningful when achieved without excessive volatility.\n\nEvaluating risk-adjusted returns helps investors compare strategies more fairly. It emphasizes balance rather than raw performance."
+  },
+  {
+    "id": 100,
+    "question": "Why is a long-term mindset powerful?",
+    "answer": "A long-term mindset reduces focus on short-term volatility and emphasizes sustained growth. It allows compounding and economic expansion to work over time.\n\nBy prioritizing patience and consistency, investors improve resilience during downturns. Long-term thinking supports disciplined wealth building."
+  },
+  {
+    "id": 101,
+    "question": "What is market efficiency?",
+    "answer": "Market efficiency refers to the idea that financial markets quickly incorporate all available information into asset prices. When markets are efficient, prices reflect known data about earnings, economic trends, and risk. This makes it difficult for investors to consistently outperform the market by using publicly available information alone.\n\nWhile markets are not perfectly efficient at all times, they are generally efficient enough that predicting short-term price movements is extremely challenging. This is one reason diversified, long-term strategies often outperform frequent trading attempts. Understanding market efficiency encourages humility and disciplined investing."
+  },
+  {
+    "id": 102,
+    "question": "Why is trying to “buy low and sell high” harder than it sounds?",
+    "answer": "Buying low and selling high requires accurately identifying when prices have bottomed and when they have peaked. In reality, these turning points are only clear in hindsight. During downturns, fear dominates, and prices may continue falling longer than expected. During rallies, optimism can persist beyond reasonable valuations.\n\nBecause emotions and uncertainty influence decisions, many investors end up doing the opposite—buying after prices rise and selling after declines. A disciplined, consistent strategy reduces reliance on perfect timing and increases the likelihood of long-term success."
+  },
+  {
+    "id": 103,
+    "question": "What is opportunity cost in investing?",
+    "answer": "Opportunity cost is the value of the next best alternative that is given up when making a decision. In investing, choosing to hold cash instead of stocks may mean missing potential growth. Conversely, choosing high-risk assets may mean giving up stability.\n\nEvery investment decision involves trade-offs. Understanding opportunity cost helps investors think beyond immediate returns and consider broader implications. It encourages thoughtful allocation rather than reactive decision-making."
+  },
+  {
+    "id": 104,
+    "question": "Why does diversification work best over time?",
+    "answer": "Diversification works best over extended periods because different assets perform differently across economic cycles. In the short term, diversified portfolios may still experience volatility, especially during widespread market downturns. However, over time, performance differences between assets tend to balance out.\n\nBy holding multiple asset classes and sectors, investors increase the likelihood that some investments will perform well during various phases of the economic cycle. This smoothing effect becomes more noticeable over longer horizons, reinforcing the value of patience."
+  },
+  {
+    "id": 105,
+    "question": "What is systemic risk?",
+    "answer": "Systemic risk refers to the risk that affects the entire financial system rather than a single company or sector. Examples include global recessions, financial crises, or widespread economic disruptions. During such events, many asset classes may decline simultaneously.\n\nSystemic risk cannot be eliminated through diversification alone. However, maintaining balanced portfolios, holding some defensive assets, and preserving liquidity can help mitigate its impact. Understanding systemic risk helps investors prepare for broad market downturns."
+  },
+  {
+    "id": 106,
+    "question": "What is idiosyncratic risk?",
+    "answer": "Idiosyncratic risk is the risk specific to a particular company or industry. For example, a company’s leadership scandal or product failure may cause its stock price to decline independently of broader market trends.\n\nDiversification effectively reduces idiosyncratic risk because holding multiple companies minimizes reliance on any single one. While systemic risk affects markets broadly, idiosyncratic risk can be managed by spreading investments across different holdings."
+  },
+  {
+    "id": 107,
+    "question": "Why do stock prices sometimes fall even when earnings are strong?",
+    "answer": "Stock prices reflect expectations rather than past performance. If investors anticipated even stronger earnings, prices may decline when results merely meet expectations. Markets react to surprises relative to forecasts, not absolute performance.\n\nAdditionally, broader economic concerns or changes in interest rates may outweigh strong company results. Understanding that markets are forward-looking helps investors interpret these seemingly contradictory movements."
+  },
+  {
+    "id": 108,
+    "question": "What is diversification across asset types?",
+    "answer": "Diversification across asset types means spreading investments among stocks, bonds, cash, real estate, and possibly other categories. Each asset type responds differently to economic conditions and interest rates.\n\nCombining asset types reduces reliance on one source of return. For example, bonds may provide stability during stock market downturns. This approach enhances overall portfolio resilience."
+  },
+  {
+    "id": 109,
+    "question": "Why is volatility not the same as loss?",
+    "answer": "Volatility measures price fluctuations, but a temporary decline does not necessarily represent a permanent loss. Loss becomes permanent only if an investor sells at a lower price than purchase.\n\nUnderstanding this distinction helps investors maintain perspective. Long-term growth trends often outweigh short-term volatility. Patience allows time for recovery."
+  },
+  {
+    "id": 110,
+    "question": "What is the importance of historical context in investing?",
+    "answer": "Historical context helps investors understand that market downturns, corrections, and recoveries are recurring events. Studying past cycles provides perspective during uncertain periods.\n\nWhile history does not guarantee future results, it demonstrates that markets have historically recovered from crises. Context supports rational decision-making during volatility."
+  },
+  {
+    "id": 111,
+    "question": "What does it mean for markets to “overreact”?",
+    "answer": "Markets overreact when prices move more dramatically than justified by underlying fundamentals. Fear or optimism may amplify short-term movements beyond reasonable expectations.\n\nOverreactions often correct over time. Long-term investors benefit from recognizing when sentiment may be driving prices excessively in one direction."
+  },
+  {
+    "id": 112,
+    "question": "Why is diversification within stocks important?",
+    "answer": "Diversifying within stocks means owning companies from multiple industries, sizes, and regions. Concentrating in a single industry increases exposure to sector-specific risks.\n\nHolding a broad range of stocks reduces reliance on one economic segment. This internal diversification strengthens equity allocations."
+  },
+  {
+    "id": 113,
+    "question": "What is the purpose of defensive investments?",
+    "answer": "Defensive investments, such as bonds or utilities, aim to provide stability during economic downturns. They often experience smaller fluctuations than growth-oriented assets.\n\nIncluding defensive investments in portfolios helps manage volatility and protect capital. They complement higher-growth assets."
+  },
+  {
+    "id": 114,
+    "question": "Why do economic indicators matter to investors?",
+    "answer": "Economic indicators such as unemployment rates, GDP growth, and inflation provide insight into overall economic health. These indicators influence corporate earnings and interest rates.\n\nInvestors monitor economic data to assess potential impacts on markets. However, markets often anticipate changes before official data confirms them."
+  },
+  {
+    "id": 115,
+    "question": "What is long-term capital growth?",
+    "answer": "Long-term capital growth refers to sustained increases in asset value over many years. It results from earnings growth, reinvestment, and economic expansion.\n\nCapital growth forms the foundation of wealth building. Consistency and time amplify its impact through compounding."
+  },
+  {
+    "id": 116,
+    "question": "Why is patience rewarded in markets?",
+    "answer": "Patience allows investors to capture long-term growth trends and avoid costly emotional reactions. Short-term volatility often resolves over time.\n\nRemaining invested ensures participation in recoveries and compounding. Discipline improves long-term results."
+  },
+  {
+    "id": 117,
+    "question": "What is diversification by market capitalization?",
+    "answer": "Diversification by market capitalization involves holding companies of different sizes, such as large-cap, mid-cap, and small-cap stocks. Each size category behaves differently.\n\nThis diversification spreads exposure across growth stages and risk levels. It enhances equity portfolio balance."
+  },
+  {
+    "id": 118,
+    "question": "Why do markets sometimes rise during bad news?",
+    "answer": "Markets may rise during bad news if investors expected worse outcomes. When reality is better than feared, optimism increases.\n\nThis highlights the importance of expectations. Price movements reflect changes in outlook rather than headlines alone."
+  },
+  {
+    "id": 119,
+    "question": "What is reinvestment risk?",
+    "answer": "Reinvestment risk occurs when interest or dividends must be reinvested at lower rates than originally earned. This affects income-focused investments.\n\nDiversification and allocation strategies help manage reinvestment risk over time."
+  },
+  {
+    "id": 120,
+    "question": "Why is emotional control more valuable than prediction skill?",
+    "answer": "Prediction is uncertain, but emotional discipline can be controlled. Avoiding panic and overconfidence reduces costly mistakes.\n\nStructured strategies reduce reliance on forecasting and emphasize consistency."
+  },
+  {
+    "id": 121,
+    "question": "What is the difference between short-term and long-term volatility?",
+    "answer": "Short-term volatility reflects daily or weekly fluctuations. Long-term volatility refers to broader multi-year swings.\n\nLong-term investors focus more on extended trends than daily noise."
+  },
+  {
+    "id": 122,
+    "question": "Why do diversified portfolios still decline in recessions?",
+    "answer": "Recessions affect broad economic activity, impacting many asset classes simultaneously. Even diversified portfolios may experience temporary declines.\n\nHowever, diversification reduces the severity compared to concentrated positions."
+  },
+  {
+    "id": 123,
+    "question": "What is financial resilience in investing?",
+    "answer": "Financial resilience refers to the ability to withstand market downturns without abandoning long-term plans.\n\nDiversification, emergency savings, and appropriate allocation strengthen resilience."
+  },
+  {
+    "id": 124,
+    "question": "Why is asset allocation dynamic over time?",
+    "answer": "Asset allocation changes as goals approach. Younger investors may prioritize growth; retirees may emphasize stability.\n\nAdjusting allocation aligns portfolios with evolving risk tolerance and objectives."
+  },
+  {
+    "id": 125,
+    "question": "What is the central lesson of long-term investing?",
+    "answer": "The central lesson is that disciplined diversification and patience outperform reactive decision-making. Markets fluctuate but reward consistent participation.\n\nStaying invested through cycles allows compounding and economic growth to work over time."
+  },
+  {
+    "id": 126,
+    "question": "What is portfolio volatility and why does it matter?",
+    "answer": "Portfolio volatility refers to the degree to which the total value of a portfolio fluctuates over time. It is influenced by the asset allocation, correlation between holdings, and exposure to higher-risk investments. A portfolio heavily weighted toward equities will generally experience greater volatility than one balanced with bonds and cash equivalents.\n\nVolatility matters because it affects both financial outcomes and investor behavior. Excessive fluctuations can lead to emotional decisions, such as panic selling during downturns. A well-structured portfolio seeks to balance growth potential with a level of volatility that the investor can comfortably tolerate over time."
+  },
+  {
+    "id": 127,
+    "question": "Why does diversification not guarantee profits?",
+    "answer": "Diversification reduces the impact of individual asset declines but does not eliminate overall market risk. When broad economic downturns occur, many diversified investments may decline together. This means that even balanced portfolios can experience temporary losses.\n\nHowever, diversification still plays a critical role in long-term stability. It reduces concentration risk and increases the likelihood that some assets will perform better than others under different conditions. While it cannot guarantee profits, it improves risk-adjusted outcomes."
+  },
+  {
+    "id": 128,
+    "question": "What is the role of earnings in stock valuation?",
+    "answer": "Corporate earnings represent a company’s profitability and are a major driver of stock prices. When earnings grow consistently, investors often become more confident in the company’s future prospects, which can push prices higher.\n\nHowever, stock prices reflect expected future earnings rather than past performance. If earnings growth slows or fails to meet expectations, stock prices may decline even if profits remain positive. Understanding this dynamic helps investors interpret price changes more clearly."
+  },
+  {
+    "id": 129,
+    "question": "Why is diversification across time important?",
+    "answer": "Diversification across time refers to investing consistently rather than committing all capital at once. Regular contributions help reduce the risk of entering the market at an unfavorable moment.\n\nBy spreading investments over months or years, investors reduce timing risk and benefit from dollar-cost averaging. This approach complements diversification across assets and strengthens long-term discipline."
+  },
+  {
+    "id": 130,
+    "question": "What is downside risk?",
+    "answer": "Downside risk refers to the potential for an investment’s value to decline. It measures the likelihood and magnitude of losses rather than overall variability.\n\nUnderstanding downside risk helps investors evaluate whether potential returns justify potential losses. Managing downside risk through diversification and allocation supports long-term resilience."
+  },
+  {
+    "id": 131,
+    "question": "Why do markets sometimes disconnect from fundamentals temporarily?",
+    "answer": "Markets can temporarily disconnect from fundamentals due to strong emotional sentiment, speculation, or herd behavior. In such cases, prices may rise or fall rapidly without immediate changes in underlying earnings or economic data.\n\nOver time, however, fundamentals tend to reassert influence. While short-term disconnects can persist longer than expected, long-term investors benefit from focusing on sustainable value rather than short-lived narratives."
+  },
+  {
+    "id": 132,
+    "question": "What is capital preservation?",
+    "answer": "Capital preservation refers to strategies designed to protect the principal value of investments. Investors prioritizing capital preservation typically allocate more toward bonds, cash, or other lower-volatility assets.\n\nWhile preservation limits downside risk, it may also reduce growth potential. Balancing capital preservation with growth objectives is an important part of portfolio construction."
+  },
+  {
+    "id": 133,
+    "question": "Why is long-term consistency difficult for investors?",
+    "answer": "Long-term consistency is difficult because markets are emotionally challenging. Periods of sharp gains create temptation to chase trends, while downturns trigger fear and uncertainty.\n\nMaintaining consistency requires discipline, structured plans, and realistic expectations. Investors who remain committed to long-term strategies are more likely to achieve stable outcomes."
+  },
+  {
+    "id": 134,
+    "question": "What is growth investing?",
+    "answer": "Growth investing focuses on companies expected to increase earnings at above-average rates. Investors seek firms reinvesting profits to expand operations and capture new opportunities.\n\nGrowth stocks may offer strong appreciation but often experience higher volatility. Including growth investments within diversified portfolios supports long-term capital expansion."
+  },
+  {
+    "id": 135,
+    "question": "What is value investing?",
+    "answer": "Value investing involves purchasing companies believed to be undervalued relative to fundamentals. Investors look for stocks trading below perceived intrinsic value.\n\nWhile value investing can provide opportunities for long-term gains, it may require patience. Market recognition of value often takes time."
+  },
+  {
+    "id": 136,
+    "question": "Why is economic growth tied to market returns?",
+    "answer": "Economic growth supports higher corporate earnings, job creation, and productivity improvements. As businesses expand and generate profits, shareholder value often increases.\n\nAlthough markets do not move in perfect alignment with economic data, sustained economic expansion historically supports long-term market growth."
+  },
+  {
+    "id": 137,
+    "question": "What is the importance of reinvesting dividends?",
+    "answer": "Reinvesting dividends means using income payments to purchase additional shares. This increases ownership and enhances compounding over time.\n\nDividend reinvestment accelerates long-term growth by allowing earnings to generate further returns. Over decades, this effect becomes significant."
+  },
+  {
+    "id": 138,
+    "question": "Why is diversification across asset styles useful?",
+    "answer": "Asset styles, such as growth and value or large-cap and small-cap, perform differently across economic cycles. Including multiple styles reduces reliance on one performance pattern.\n\nStyle diversification enhances resilience within equity allocations and contributes to smoother long-term outcomes."
+  },
+  {
+    "id": 139,
+    "question": "What is market sentiment risk?",
+    "answer": "Market sentiment risk arises when prices are driven more by emotion than fundamentals. Excessive optimism or pessimism can distort valuations.\n\nUnderstanding sentiment risk helps investors avoid reacting impulsively. Balanced strategies mitigate exposure to extreme swings."
+  },
+  {
+    "id": 140,
+    "question": "Why are long-term averages misleading in the short term?",
+    "answer": "Long-term averages smooth out fluctuations over decades. However, short-term returns may vary significantly from those averages.\n\nRelying on long-term averages for short-term predictions can create unrealistic expectations. Time horizon alignment is critical."
+  },
+  {
+    "id": 141,
+    "question": "What is diversification across industries?",
+    "answer": "Industry diversification means investing across multiple sectors such as healthcare, technology, and consumer goods. Each industry responds differently to economic shifts.\n\nBy spreading exposure, investors reduce vulnerability to sector-specific downturns."
+  },
+  {
+    "id": 142,
+    "question": "Why does allocation matter more than individual timing decisions?",
+    "answer": "Allocation determines structural risk exposure. Even well-timed trades cannot compensate for poorly aligned asset allocation.\n\nStrategic allocation supports consistent outcomes across varying market conditions."
+  },
+  {
+    "id": 143,
+    "question": "What is risk tolerance mismatch?",
+    "answer": "Risk tolerance mismatch occurs when a portfolio’s volatility exceeds an investor’s comfort level. This can lead to panic selling during downturns.\n\nAligning allocation with risk tolerance improves discipline and reduces emotional decisions."
+  },
+  {
+    "id": 144,
+    "question": "Why does diversification improve risk-adjusted returns?",
+    "answer": "Diversification lowers volatility without proportionally reducing returns. This improves returns relative to risk taken.\n\nHigher risk-adjusted returns indicate more efficient portfolio construction."
+  },
+  {
+    "id": 145,
+    "question": "What is the purpose of periodic rebalancing?",
+    "answer": "Periodic rebalancing maintains target allocation and prevents drift. It ensures portfolios do not become unintentionally aggressive.\n\nRebalancing reinforces discipline and systematic management."
+  },
+  {
+    "id": 146,
+    "question": "Why is global exposure beneficial?",
+    "answer": "Global exposure captures growth opportunities beyond domestic markets. Different regions experience varied economic cycles.\n\nThis diversification enhances resilience and growth potential."
+  },
+  {
+    "id": 147,
+    "question": "What is long-term compounding risk?",
+    "answer": "Long-term compounding risk refers to the negative impact of persistent underperformance or poor allocation decisions over extended periods.\n\nAvoiding unnecessary risk and maintaining discipline protects compounding benefits."
+  },
+  {
+    "id": 148,
+    "question": "Why is patience more reliable than prediction?",
+    "answer": "Patience relies on historical growth trends and structured planning rather than uncertain forecasts.\n\nPrediction depends on timing accuracy, which is difficult to sustain consistently."
+  },
+  {
+    "id": 149,
+    "question": "What is strategic investing?",
+    "answer": "Strategic investing involves long-term allocation decisions aligned with goals and risk tolerance.\n\nIt prioritizes structure over short-term reactions."
+  },
+  {
+    "id": 150,
+    "question": "Why is disciplined behavior the foundation of investing success?",
+    "answer": "Disciplined behavior ensures consistency, emotional control, and alignment with long-term objectives.\n\nInvestors who remain disciplined are more likely to benefit from compounding and market growth over time."
   }
 ]
