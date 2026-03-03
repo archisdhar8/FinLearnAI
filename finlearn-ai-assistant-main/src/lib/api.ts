@@ -1,7 +1,8 @@
 // API Configuration
-// Uses environment variable in production, localhost in development
+// In production (Vercel), use same origin since vercel.json rewrites /api/* to EC2
+// In development, use localhost:8000
 
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+export const API_URL = import.meta.env.DEV ? 'http://localhost:8000' : '';
 
 // Helper function for API calls
 export async function apiCall<T>(
