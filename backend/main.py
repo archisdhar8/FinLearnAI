@@ -51,7 +51,8 @@ _news_fetcher = None
 # Stock analysis cache for default watchlists
 _stock_cache: Dict[str, Any] = {}
 _stock_cache_time: Dict[str, datetime] = {}
-_CACHE_TTL_MINUTES = 15  # Cache expires after 15 minutes
+_CACHE_TTL_MINUTES = 720  # Cache expires after 12 hours (stock data refreshes on restart)
+_SCREENER_CACHE_FILE = Path(__file__).parent / "cache" / "screener_cache.json"
 
 # Default watchlists to preload (must match frontend StockScreener.tsx)
 DEFAULT_WATCHLISTS = {
@@ -62,6 +63,41 @@ DEFAULT_WATCHLISTS = {
     "ETFs": ["SPY", "QQQ", "IWM", "DIA", "XLF", "XLE"],
     "Growth": ["TSLA", "NFLX", "CRM", "ADBE", "SQ", "SHOP"],
 }
+
+def _load_screener_cache_from_file():
+    """Load stock screener cache from disk for instant startup."""
+    global _stock_cache, _stock_cache_time
+    if _SCREENER_CACHE_FILE.exists():
+        try:
+            import json
+            with open(_SCREENER_CACHE_FILE, 'r') as f:
+                data = json.load(f)
+            for ticker, entry in data.items():
+                _stock_cache[ticker] = entry["data"]
+                _stock_cache_time[ticker] = datetime.fromisoformat(entry["time"])
+            print(f"[Cache] Loaded {len(data)} screener stocks from disk cache")
+        except Exception as e:
+            print(f"[Cache] Failed to load screener cache: {e}")
+
+def _save_screener_cache_to_file():
+    """Persist stock screener cache to disk."""
+    try:
+        import json
+        _SCREENER_CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
+        data = {}
+        for ticker in _stock_cache:
+            data[ticker] = {
+                "data": _stock_cache[ticker],
+                "time": _stock_cache_time.get(ticker, datetime.now()).isoformat()
+            }
+        with open(_SCREENER_CACHE_FILE, 'w') as f:
+            json.dump(data, f)
+        print(f"[Cache] Saved {len(data)} screener stocks to disk cache")
+    except Exception as e:
+        print(f"[Cache] Failed to save screener cache: {e}")
+
+# Load screener cache immediately on import (before server starts)
+_load_screener_cache_from_file()
 
 def _prewarm_cv():
     """Helper to prewarm CV models - actual load_cv_models defined below."""
@@ -131,7 +167,9 @@ async def prewarm_models():
     try:
         import asyncio
         asyncio.create_task(preload_default_stocks())
-        print("[Prewarm] Stock preload task started")
+        # Also start periodic refresh (every 6 hours)
+        asyncio.create_task(_periodic_stock_refresh())
+        print("[Prewarm] Stock preload task started (refreshes every 6h)")
     except Exception as e:
         print(f"[Prewarm] Stock preload failed: {e}")
     
@@ -266,9 +304,26 @@ async def preload_default_stocks():
                 continue
         
         print(f"[Preload] Loaded {loaded}/{len(all_tickers)} stocks into cache")
+        # Persist to disk so next restart is instant
+        _save_screener_cache_to_file()
         
     except Exception as e:
         print(f"[Preload] Error: {e}")
+
+
+async def _periodic_stock_refresh():
+    """Periodically refresh the stock screener cache every 6 hours."""
+    import asyncio
+    while True:
+        await asyncio.sleep(6 * 3600)  # Wait 6 hours
+        print("[Refresh] Refreshing stock screener cache...")
+        try:
+            # Clear old cache so preload fetches fresh data
+            _stock_cache.clear()
+            _stock_cache_time.clear()
+            await preload_default_stocks()  # This also saves to disk
+        except Exception as e:
+            print(f"[Refresh] Error: {e}")
 
 # =============================================================================
 # Request/Response Models

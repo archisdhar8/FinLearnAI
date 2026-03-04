@@ -29,6 +29,9 @@ const Index = () => {
           options: { emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
+
+        // The database trigger (handle_new_user) automatically syncs to public.users
+
         // If email confirmation is required, user won't have a session yet
         if (data.session) {
           navigate("/dashboard");
