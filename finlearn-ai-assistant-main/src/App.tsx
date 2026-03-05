@@ -13,6 +13,7 @@ import Simulator from "./pages/Simulator";
 import Leaderboard from "./pages/Leaderboard";
 import Social from "./pages/Social";
 import ETFRecommender from "./pages/ETFRecommender";
+import ETFAllocator from "./pages/ETFAllocator";
 import AIStockDiscovery from "./pages/AIStockDiscovery";
 import NotFound from "./pages/NotFound";
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/social" element={<Social />} />
           <Route path="/etf-recommender" element={<ETFRecommender />} />
+          <Route path="/etf-allocator" element={<ETFAllocator />} />
           <Route path="/ai-discovery" element={<AIStockDiscovery />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

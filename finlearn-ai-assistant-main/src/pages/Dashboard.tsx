@@ -167,17 +167,17 @@ const Dashboard = () => {
               </button>
 
               <button
-                onClick={() => navigate("/etf-recommender")}
+                onClick={() => navigate("/etf-allocator")}
                 className="glass-card rounded-xl p-6 text-left hover:border-green-400/40 transition-all group"
               >
                 <div className="p-2.5 rounded-lg bg-green-500/10 text-green-400 w-fit mb-4 group-hover:shadow-lg group-hover:shadow-green-500/20 transition-all">
                   <PieChart className="w-5 h-5" />
                 </div>
                 <h3 className="font-display text-lg font-semibold mb-2 group-hover:text-green-400 transition-colors">
-                  ETF Recommender
+                  Smart ETF Allocator
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Take a risk quiz, get personalized ETF recommendations, and run Monte Carlo simulations
+                  GA-optimised ETF portfolios with thematic constraints and Monte Carlo simulation
                 </p>
               </button>
             </div>
