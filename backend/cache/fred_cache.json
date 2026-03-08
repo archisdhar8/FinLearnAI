@@ -1,13 +1,13 @@
 {
-  "dgs10": 4.02,
-  "dgs3mo": 3.68,
-  "dgs2": 3.42,
+  "dgs10": 4.06,
+  "dgs3mo": 3.71,
+  "dgs2": 3.51,
   "cpi_yoy": 2.83,
   "cpi_yoy_6m_ago": 2.68,
   "unrate": 4.3,
   "unrate_6m_ago": 4.1,
-  "nfci": -0.56294,
-  "baa10y": 1.73,
-  "timestamp": "2026-03-02T10:00:46.916824",
+  "nfci": -0.52365,
+  "baa10y": 1.78,
+  "timestamp": "2026-03-04T19:46:44.272634",
   "data_source": "fred"
 }

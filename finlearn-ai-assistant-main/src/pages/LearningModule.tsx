@@ -62,42 +62,51 @@ export default function LearningModule() {
         return;
       }
       setUserId(session.user.id);
-      
-      // Load user progress
-      await loadProgress(session.user.id);
+      // Show content immediately — progress loads in the background
       setLoading(false);
+      // Fire both requests in parallel (non-blocking)
+      loadProgress(session.user.id);
+      // Ensure user profile exists with proper display name
+      ensureProfile(session.user.id, session.user.email || '');
     };
     init();
   }, [navigate, moduleId]);
 
+  const ensureProfile = async (uid: string, email: string) => {
+    const { API_URL } = await import("@/lib/api");
+    const displayName = email ? email.split("@")[0] : `User ${uid.substring(0, 8)}`;
+    try {
+      await fetch(`${API_URL}/api/profile?user_id=${uid}&display_name=${encodeURIComponent(displayName)}`, {
+        method: 'POST',
+      });
+    } catch {
+      // Non-critical
+    }
+  };
+
   const loadProgress = async (uid: string) => {
     const { API_URL } = await import("@/lib/api");
-    try {
-      const response = await fetch(`${API_URL}/api/progress/${uid}`);
-      if (response.ok) {
-        const data = await response.json();
-        const moduleProgress = data.progress[moduleId || ''] || {};
-        setCompletedLessons(moduleProgress.completed_lessons || []);
-      }
-    } catch (err) {
-      console.error('Failed to load progress:', err);
+    // Run both fetches in parallel
+    const [progressRes, scoresRes] = await Promise.allSettled([
+      fetch(`${API_URL}/api/progress/${uid}`).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(`${API_URL}/api/quiz/scores/${uid}`).then(r => r.ok ? r.json() : null).catch(() => null),
+    ]);
+
+    // Apply progress
+    if (progressRes.status === 'fulfilled' && progressRes.value) {
+      const moduleProgress = progressRes.value.progress[moduleId || ''] || {};
+      setCompletedLessons(moduleProgress.completed_lessons || []);
     }
-    
-    // Load quiz scores
-    try {
-      const response = await fetch(`${API_URL}/api/quiz/scores/${uid}`);
-      if (response.ok) {
-        const data = await response.json();
-        const scores: Record<string, number> = {};
-        for (const score of data.lesson_scores) {
-          if (score.module_id === moduleId) {
-            scores[score.lesson_id] = score.best_score;
-          }
+
+    // Apply quiz scores
+    if (scoresRes.status === 'fulfilled' && scoresRes.value) {
+      const scores: Record<string, number> = {};
+      for (const score of scoresRes.value.lesson_scores || []) {
+        if (score.module_id === moduleId) {
+          scores[score.lesson_id] = score.best_score;
         }
-        setLessonQuizScores(scores);
       }
-    } catch (err) {
-      console.error('Failed to load quiz scores:', err);
+      setLessonQuizScores(scores);
     }
   };
 
@@ -106,16 +115,24 @@ export default function LearningModule() {
     
     const { API_URL: progressUrl } = await import("@/lib/api");
     try {
-      await fetch(`${progressUrl}/api/progress`, {
+      const { data: { user } } = await supabase.auth.getUser();
+      const displayName = user?.email?.split('@')[0] || `User ${userId.substring(0, 8)}`;
+
+      const res = await fetch(`${progressUrl}/api/progress`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           user_id: userId,
           module_id: moduleId,
           lesson_id: lessonId,
-          completed: true
+          completed: true,
+          display_name: displayName
         })
       });
+      if (!res.ok) {
+        const errText = await res.text();
+        console.error('Failed to save progress:', res.status, errText);
+      }
     } catch (err) {
       console.error('Failed to save progress:', err);
     }
@@ -128,7 +145,10 @@ export default function LearningModule() {
     
     const { API_URL: quizUrl } = await import("@/lib/api");
     try {
-      await fetch(`${quizUrl}/api/quiz/submit`, {
+      const { data: { user } } = await supabase.auth.getUser();
+      const displayName = user?.email?.split('@')[0] || `User ${userId.substring(0, 8)}`;
+
+      const res = await fetch(`${quizUrl}/api/quiz/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -137,9 +157,15 @@ export default function LearningModule() {
           lesson_id: isFinal ? null : currentLesson?.id,
           score,
           total_questions: total,
-          is_final_quiz: isFinal
+          is_final_quiz: isFinal,
+          display_name: displayName
         })
       });
+      
+      if (!res.ok) {
+        const errText = await res.text();
+        console.error('Failed to submit quiz:', res.status, errText);
+      }
       
       if (!isFinal && currentLesson) {
         setLessonQuizScores(prev => ({ ...prev, [currentLesson.id]: score }));

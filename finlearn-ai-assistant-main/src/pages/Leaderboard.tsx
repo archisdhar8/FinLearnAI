@@ -31,18 +31,18 @@ interface UserStats {
   modules_completed: number;
 }
 
-// Sample leaderboard data (will be replaced by real data from backend)
+// Fallback seed data (backend returns the authoritative list)
 const SAMPLE_LEADERBOARD: LeaderboardEntry[] = [
-  { rank: 1, user_id: "1", username: "InvestorPro", avatar_color: "bg-yellow-500", total_score: 2850, quizzes_completed: 18, modules_completed: 3, average_score: 94 },
-  { rank: 2, user_id: "2", username: "WealthBuilder", avatar_color: "bg-blue-500", total_score: 2720, quizzes_completed: 17, modules_completed: 3, average_score: 91 },
-  { rank: 3, user_id: "3", username: "StockSavvy", avatar_color: "bg-green-500", total_score: 2580, quizzes_completed: 16, modules_completed: 3, average_score: 89 },
-  { rank: 4, user_id: "4", username: "MarketMaster", avatar_color: "bg-purple-500", total_score: 2340, quizzes_completed: 15, modules_completed: 2, average_score: 87 },
-  { rank: 5, user_id: "5", username: "DividendKing", avatar_color: "bg-pink-500", total_score: 2180, quizzes_completed: 14, modules_completed: 2, average_score: 85 },
-  { rank: 6, user_id: "6", username: "IndexFundFan", avatar_color: "bg-cyan-500", total_score: 1950, quizzes_completed: 13, modules_completed: 2, average_score: 83 },
-  { rank: 7, user_id: "7", username: "CompoundKing", avatar_color: "bg-orange-500", total_score: 1820, quizzes_completed: 12, modules_completed: 2, average_score: 81 },
-  { rank: 8, user_id: "8", username: "RetireEarly", avatar_color: "bg-red-500", total_score: 1650, quizzes_completed: 11, modules_completed: 1, average_score: 79 },
-  { rank: 9, user_id: "9", username: "BudgetBoss", avatar_color: "bg-indigo-500", total_score: 1480, quizzes_completed: 10, modules_completed: 1, average_score: 77 },
-  { rank: 10, user_id: "10", username: "NewInvestor", avatar_color: "bg-teal-500", total_score: 1200, quizzes_completed: 8, modules_completed: 1, average_score: 75 },
+  { rank: 1, user_id: "seed-01", username: "sarah.m",       avatar_color: "bg-violet-500",  total_score: 58, quizzes_completed: 19, modules_completed: 4, average_score: 94 },
+  { rank: 2, user_id: "seed-02", username: "jchen_99",      avatar_color: "bg-blue-500",    total_score: 52, quizzes_completed: 16, modules_completed: 3, average_score: 91 },
+  { rank: 3, user_id: "seed-03", username: "mike.ramirez",  avatar_color: "bg-green-500",   total_score: 47, quizzes_completed: 15, modules_completed: 3, average_score: 90 },
+  { rank: 4, user_id: "seed-11", username: "james.p",       avatar_color: "bg-indigo-500",  total_score: 44, quizzes_completed: 14, modules_completed: 3, average_score: 89 },
+  { rank: 5, user_id: "seed-04", username: "priya.k",       avatar_color: "bg-pink-500",    total_score: 41, quizzes_completed: 13, modules_completed: 3, average_score: 88 },
+  { rank: 6, user_id: "seed-05", username: "david.l",       avatar_color: "bg-yellow-500",  total_score: 35, quizzes_completed: 11, modules_completed: 2, average_score: 86 },
+  { rank: 7, user_id: "seed-12", username: "zoe.martinez",  avatar_color: "bg-emerald-500", total_score: 33, quizzes_completed: 10, modules_completed: 2, average_score: 85 },
+  { rank: 8, user_id: "seed-06", username: "emma.w",        avatar_color: "bg-cyan-500",    total_score: 28, quizzes_completed: 9,  modules_completed: 2, average_score: 84 },
+  { rank: 9, user_id: "seed-07", username: "alex.t",        avatar_color: "bg-orange-500",  total_score: 22, quizzes_completed: 7,  modules_completed: 1, average_score: 82 },
+  { rank: 10, user_id: "seed-08", username: "nina.h",       avatar_color: "bg-purple-500",  total_score: 16, quizzes_completed: 5,  modules_completed: 1, average_score: 80 },
 ];
 
 export default function Leaderboard() {

@@ -32,3 +32,4 @@ chart-vision/data/
 chart-vision/checkpoints/*.png
 chart-vision/checkpoints/*.json
 # Keep .pt model files (they're small enough to commit)
+cache/

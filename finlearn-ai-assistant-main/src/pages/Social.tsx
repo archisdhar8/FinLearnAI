@@ -25,20 +25,20 @@ interface UserProfile {
   last_activity: string;
 }
 
-// Sample users data
+// Fallback seed data (backend returns the authoritative list)
 const SAMPLE_USERS: UserProfile[] = [
-  { id: "1", username: "InvestorPro", avatar_color: "bg-yellow-500", total_score: 2850, modules_completed: 3, quizzes_completed: 18, joined_date: "2024-01-15", is_online: true, last_activity: "Completed Advanced Module" },
-  { id: "2", username: "WealthBuilder", avatar_color: "bg-blue-500", total_score: 2720, modules_completed: 3, quizzes_completed: 17, joined_date: "2024-02-01", is_online: true, last_activity: "Scored 95% on Risk Quiz" },
-  { id: "3", username: "StockSavvy", avatar_color: "bg-green-500", total_score: 2580, modules_completed: 3, quizzes_completed: 16, joined_date: "2024-01-20", is_online: false, last_activity: "Learning about ETFs" },
-  { id: "4", username: "MarketMaster", avatar_color: "bg-purple-500", total_score: 2340, modules_completed: 2, quizzes_completed: 15, joined_date: "2024-02-10", is_online: true, last_activity: "Started Investor Insight" },
-  { id: "5", username: "DividendKing", avatar_color: "bg-pink-500", total_score: 2180, modules_completed: 2, quizzes_completed: 14, joined_date: "2024-01-25", is_online: false, last_activity: "Completed Foundation" },
-  { id: "6", username: "IndexFundFan", avatar_color: "bg-cyan-500", total_score: 1950, modules_completed: 2, quizzes_completed: 13, joined_date: "2024-02-15", is_online: true, last_activity: "Exploring Stock Screener" },
-  { id: "7", username: "CompoundKing", avatar_color: "bg-orange-500", total_score: 1820, modules_completed: 2, quizzes_completed: 12, joined_date: "2024-02-20", is_online: false, last_activity: "Learning Compounding" },
-  { id: "8", username: "RetireEarly", avatar_color: "bg-red-500", total_score: 1650, modules_completed: 1, quizzes_completed: 11, joined_date: "2024-03-01", is_online: true, last_activity: "Just joined!" },
-  { id: "9", username: "BudgetBoss", avatar_color: "bg-indigo-500", total_score: 1480, modules_completed: 1, quizzes_completed: 10, joined_date: "2024-02-28", is_online: false, last_activity: "Studying Risk Management" },
-  { id: "10", username: "NewInvestor", avatar_color: "bg-teal-500", total_score: 1200, modules_completed: 1, quizzes_completed: 8, joined_date: "2024-03-05", is_online: true, last_activity: "Started Foundation" },
-  { id: "11", username: "SavingsGuru", avatar_color: "bg-emerald-500", total_score: 980, modules_completed: 1, quizzes_completed: 6, joined_date: "2024-03-10", is_online: false, last_activity: "Learning about Stocks" },
-  { id: "12", username: "FinanceFresh", avatar_color: "bg-violet-500", total_score: 450, modules_completed: 0, quizzes_completed: 3, joined_date: "2024-03-12", is_online: true, last_activity: "Taking first quiz" },
+  { id: "seed-01", username: "sarah.m",       avatar_color: "bg-violet-500",  total_score: 58, modules_completed: 4, quizzes_completed: 19, joined_date: "2025-11-02", is_online: true,  last_activity: "Finished Applied Investing" },
+  { id: "seed-02", username: "jchen_99",      avatar_color: "bg-blue-500",    total_score: 52, modules_completed: 3, quizzes_completed: 16, joined_date: "2025-11-10", is_online: false, last_activity: "Scored 95% on Risk Quiz" },
+  { id: "seed-03", username: "mike.ramirez",  avatar_color: "bg-green-500",   total_score: 47, modules_completed: 3, quizzes_completed: 15, joined_date: "2025-11-14", is_online: true,  last_activity: "Learning about ETFs" },
+  { id: "seed-11", username: "james.p",       avatar_color: "bg-indigo-500",  total_score: 44, modules_completed: 3, quizzes_completed: 14, joined_date: "2025-11-20", is_online: true,  last_activity: "Studying Tax Planning" },
+  { id: "seed-04", username: "priya.k",       avatar_color: "bg-pink-500",    total_score: 41, modules_completed: 3, quizzes_completed: 13, joined_date: "2025-12-01", is_online: true,  last_activity: "Exploring Investor Psychology" },
+  { id: "seed-05", username: "david.l",       avatar_color: "bg-yellow-500",  total_score: 35, modules_completed: 2, quizzes_completed: 11, joined_date: "2025-12-08", is_online: false, last_activity: "Completed Foundation" },
+  { id: "seed-12", username: "zoe.martinez",  avatar_color: "bg-emerald-500", total_score: 33, modules_completed: 2, quizzes_completed: 10, joined_date: "2025-12-05", is_online: false, last_activity: "Completed Market Dynamics" },
+  { id: "seed-06", username: "emma.w",        avatar_color: "bg-cyan-500",    total_score: 28, modules_completed: 2, quizzes_completed: 9,  joined_date: "2025-12-15", is_online: true,  last_activity: "Using Stock Screener" },
+  { id: "seed-07", username: "alex.t",        avatar_color: "bg-orange-500",  total_score: 22, modules_completed: 1, quizzes_completed: 7,  joined_date: "2026-01-04", is_online: false, last_activity: "Learning Compounding" },
+  { id: "seed-08", username: "nina.h",        avatar_color: "bg-purple-500",  total_score: 16, modules_completed: 1, quizzes_completed: 5,  joined_date: "2026-01-12", is_online: true,  last_activity: "Working on Risk Management" },
+  { id: "seed-09", username: "ryan.g",        avatar_color: "bg-red-500",     total_score: 10, modules_completed: 1, quizzes_completed: 3,  joined_date: "2026-01-20", is_online: false, last_activity: "Just started Foundations" },
+  { id: "seed-10", username: "olivia.s",      avatar_color: "bg-teal-500",    total_score: 5,  modules_completed: 0, quizzes_completed: 2,  joined_date: "2026-02-01", is_online: true,  last_activity: "Signed up today" },
 ];
 
 export default function Social() {
@@ -80,7 +80,7 @@ export default function Social() {
     const matchesFilter = 
       filter === "all" ? true :
       filter === "online" ? user.is_online :
-      filter === "top" ? user.total_score >= 2000 : true;
+      filter === "top" ? user.total_score >= 30 : true;
     return matchesSearch && matchesFilter;
   });
 
@@ -203,7 +203,7 @@ export default function Social() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="font-semibold truncate">{user.username}</span>
-                    {user.total_score >= 2500 && (
+                    {user.total_score >= 45 && (
                       <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                     )}
                   </div>

@@ -207,12 +207,41 @@ async def preload_default_stocks():
         client = RESTClient(polygon_key)
         
         loaded = 0
+        enriched = 0
         for ticker in all_tickers:
             try:
                 # Check if already cached and fresh
                 if ticker in _stock_cache:
                     cache_age = datetime.now() - _stock_cache_time.get(ticker, datetime.min)
                     if cache_age.total_seconds() < _CACHE_TTL_MINUTES * 60:
+                        # Backfill sentiment/AI if missing from disk cache
+                        cached = _stock_cache[ticker]
+                        if cached.get('sentiment') is None or cached.get('ai_analysis') is None:
+                            try:
+                                sentiment_data = get_stock_sentiment(ticker)
+                                cached['sentiment'] = sentiment_data.get('sentiment')
+                                cached['sentiment_score'] = sentiment_data.get('sentiment_score')
+                                cached['sentiment_signal'] = sentiment_data.get('sentiment_signal')
+                                cached['news_count'] = sentiment_data.get('news_count', 0)
+                                analysis_info = {
+                                    'price': cached.get('price', 0),
+                                    'change_pct': cached.get('change_pct', 0),
+                                    'trend': cached.get('trend', 'sideways'),
+                                    'trend_confidence': cached.get('trend_confidence', 50),
+                                    'signal': cached.get('signal', 'HOLD'),
+                                    'signal_strength': cached.get('signal_strength', 50),
+                                    'support': cached.get('support', 0),
+                                    'resistance': cached.get('resistance', 0),
+                                    'sentiment': cached['sentiment'] or 'neutral',
+                                    'news_count': cached['news_count']
+                                }
+                                cached['ai_analysis'] = generate_ai_stock_analysis(ticker, analysis_info)
+                                _stock_cache[ticker] = cached
+                                enriched += 1
+                                print(f"[Preload] Enriched {ticker} with sentiment/AI")
+                                await asyncio.sleep(0.5)
+                            except Exception as e:
+                                print(f"[Preload] Failed to enrich {ticker}: {e}")
                         continue
                 
                 # Get 30+ days of data
@@ -268,11 +297,10 @@ async def preload_default_stocks():
                 support_price = analysis['support_zones'][0]['price'] if analysis['support_zones'] else round(price_min, 2)
                 resistance_price = analysis['resistance_zones'][0]['price'] if analysis['resistance_zones'] else round(price_max, 2)
                 
-                # Skip sentiment and AI analysis during preload for speed
-                # These will be generated on-demand when requested
+                # Generate sentiment during preload so users get instant results
+                sentiment_data = get_stock_sentiment(ticker)
                 
-                # Store in cache (without sentiment/AI analysis for faster preload)
-                _stock_cache[ticker] = {
+                stock_data = {
                     'ticker': ticker,
                     'price': round(latest.close, 2),
                     'change': round(change, 2),
@@ -286,25 +314,42 @@ async def preload_default_stocks():
                     'support_zones': analysis['support_zones'],
                     'resistance_zones': analysis['resistance_zones'],
                     'chart_image': chart_base64,
-                    'sentiment': None,  # Generated on-demand
-                    'sentiment_score': None,
-                    'sentiment_signal': None,
-                    'news_count': 0,
-                    'ai_analysis': None  # Generated on-demand
+                    'sentiment': sentiment_data.get('sentiment'),
+                    'sentiment_score': sentiment_data.get('sentiment_score'),
+                    'sentiment_signal': sentiment_data.get('sentiment_signal'),
+                    'news_count': sentiment_data.get('news_count', 0),
+                    'ai_analysis': None  # Will be filled below
                 }
+                
+                # Generate AI analysis text
+                analysis_info = {
+                    'price': stock_data['price'],
+                    'change_pct': stock_data['change_pct'],
+                    'trend': stock_data['trend'],
+                    'trend_confidence': stock_data['trend_confidence'],
+                    'signal': stock_data['signal'],
+                    'signal_strength': stock_data['signal_strength'],
+                    'support': stock_data['support'],
+                    'resistance': stock_data['resistance'],
+                    'sentiment': stock_data['sentiment'] or 'neutral',
+                    'news_count': stock_data['news_count']
+                }
+                stock_data['ai_analysis'] = generate_ai_stock_analysis(ticker, analysis_info)
+                
+                _stock_cache[ticker] = stock_data
                 _stock_cache_time[ticker] = datetime.now()
                 loaded += 1
                 
                 # Small delay to avoid rate limiting
                 import asyncio
-                await asyncio.sleep(0.1)  # Reduced delay since we're not calling LLM
+                await asyncio.sleep(0.5)  # Delay between stocks for sentiment + Polygon calls
                 
             except Exception as e:
                 print(f"[Preload] Error loading {ticker}: {e}")
                 continue
         
-        print(f"[Preload] Loaded {loaded}/{len(all_tickers)} stocks into cache")
-        # Persist to disk so next restart is instant
+        print(f"[Preload] Loaded {loaded} new, enriched {enriched} cached — {len(all_tickers)} total stocks")
+        # Persist to disk so next restart is instant (now with sentiment included)
         _save_screener_cache_to_file()
         
     except Exception as e:
@@ -1665,11 +1710,17 @@ def get_supabase():
         try:
             from supabase import create_client
             url = os.environ.get('SUPABASE_URL')
-            key = os.environ.get('SUPABASE_KEY')
+            # Prefer service_role key (bypasses RLS) for backend operations
+            key = os.environ.get('SUPABASE_SERVICE_KEY') or os.environ.get('SUPABASE_KEY')
             if url and key:
                 _supabase_client = create_client(url, key)
+                print(f"[Supabase] Connected to {url}")
+            else:
+                print(f"[Supabase] Missing credentials: URL={'set' if url else 'MISSING'}, KEY={'set' if key else 'MISSING'}")
         except Exception as e:
             print(f"[Supabase] Failed to initialize: {e}")
+            import traceback
+            traceback.print_exc()
     return _supabase_client
 
 
@@ -1678,6 +1729,7 @@ class ProgressUpdate(BaseModel):
     module_id: str
     lesson_id: str
     completed: bool = True
+    display_name: Optional[str] = None
 
 
 class QuizSubmission(BaseModel):
@@ -1688,6 +1740,7 @@ class QuizSubmission(BaseModel):
     total_questions: int
     time_taken_seconds: Optional[int] = None
     is_final_quiz: bool = False
+    display_name: Optional[str] = None
 
 
 class LeaderboardEntry(BaseModel):
@@ -1699,37 +1752,108 @@ class LeaderboardEntry(BaseModel):
     rank: int
 
 
+def _ensure_user_profile(sb_client, user_id: str, display_name: Optional[str] = None):
+    """Ensure user exists in public.users and user_profiles (creates if missing)."""
+    fallback_name = display_name or f"User {user_id[:8]}"
+    try:
+        # Ensure public.users row (FK target for user_progress)
+        existing_user = sb_client.table("users").select("id").eq("id", user_id).execute()
+        if not existing_user.data:
+            try:
+                sb_client.table("users").insert({
+                    "id": user_id,
+                    "email": f"{user_id[:8]}@app.local",
+                    "name": fallback_name,
+                    "password_hash": "supabase_managed",
+                    "password_salt": "supabase_managed",
+                }).execute()
+                print(f"[Supabase] Auto-created public.users row for {user_id[:8]}")
+            except Exception:
+                pass  # May fail due to RLS; trigger should handle this
+        
+        # Ensure user_profiles row
+        existing_profile = sb_client.table("user_profiles").select("user_id").eq("user_id", user_id).execute()
+        if not existing_profile.data:
+            sb_client.table("user_profiles").insert({
+                "user_id": user_id,
+                "display_name": fallback_name,
+            }).execute()
+            print(f"[Supabase] Auto-created profile for {user_id[:8]}")
+    except Exception as e:
+        print(f"[Supabase] Could not ensure profile: {e}")
+
+
 @app.post("/api/progress")
 async def update_progress(progress: ProgressUpdate):
-    """Update user's lesson progress."""
+    """Update user's lesson progress.
+    
+    Uses JSONB progress_data column: {module_id: {completed_lessons: [...], total_completed: N}}
+    """
     supabase = get_supabase()
     if not supabase:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
-        # Upsert progress
-        data = {
-            "user_id": progress.user_id,
-            "module_id": progress.module_id,
-            "lesson_id": progress.lesson_id,
-            "completed": progress.completed,
-            "completed_at": datetime.utcnow().isoformat() if progress.completed else None
-        }
+        _ensure_user_profile(supabase, progress.user_id, progress.display_name)
         
-        result = supabase.table("user_progress").upsert(
-            data,
-            on_conflict="user_id,module_id,lesson_id"
-        ).execute()
+        # Fetch existing progress row for this user
+        existing = supabase.table("user_progress").select("*").eq("user_id", progress.user_id).execute()
+        
+        if existing.data:
+            # Update existing JSONB progress_data
+            progress_data = existing.data[0].get("progress_data") or {}
+            if isinstance(progress_data, str):
+                import json as _json
+                progress_data = _json.loads(progress_data)
+            
+            mod_data = progress_data.get(progress.module_id, {"completed_lessons": [], "total_completed": 0})
+            if progress.completed and progress.lesson_id not in mod_data.get("completed_lessons", []):
+                mod_data.setdefault("completed_lessons", []).append(progress.lesson_id)
+                mod_data["total_completed"] = len(mod_data["completed_lessons"])
+            
+            progress_data[progress.module_id] = mod_data
+            
+            result = supabase.table("user_progress").update({
+                "progress_data": progress_data,
+                "updated_at": datetime.utcnow().isoformat()
+            }).eq("user_id", progress.user_id).execute()
+        else:
+            # Create new progress row
+            progress_data = {
+                progress.module_id: {
+                    "completed_lessons": [progress.lesson_id] if progress.completed else [],
+                    "total_completed": 1 if progress.completed else 0
+                }
+            }
+            result = supabase.table("user_progress").insert({
+                "user_id": progress.user_id,
+                "progress_data": progress_data,
+            }).execute()
+        
+        # Update user_profiles stats
+        total_lessons = sum(
+            len(m.get("completed_lessons", []))
+            for m in progress_data.values()
+        )
+        try:
+            supabase.table("user_profiles").update({
+                "total_lessons_completed": total_lessons,
+                "updated_at": datetime.utcnow().isoformat()
+            }).eq("user_id", progress.user_id).execute()
+        except Exception:
+            pass  # Non-critical
         
         return {"success": True, "data": result.data}
     except Exception as e:
         print(f"[Progress Error] {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/api/progress/{user_id}")
 async def get_progress(user_id: str):
-    """Get user's complete progress."""
+    """Get user's complete progress from JSONB progress_data column."""
     supabase = get_supabase()
     if not supabase:
         raise HTTPException(status_code=500, detail="Database not configured")
@@ -1737,17 +1861,14 @@ async def get_progress(user_id: str):
     try:
         result = supabase.table("user_progress").select("*").eq("user_id", user_id).execute()
         
-        # Group by module
-        progress_by_module = {}
-        for item in result.data:
-            mod_id = item["module_id"]
-            if mod_id not in progress_by_module:
-                progress_by_module[mod_id] = {"completed_lessons": [], "total_completed": 0}
-            if item["completed"]:
-                progress_by_module[mod_id]["completed_lessons"].append(item["lesson_id"])
-                progress_by_module[mod_id]["total_completed"] += 1
+        if result.data:
+            progress_data = result.data[0].get("progress_data") or {}
+            if isinstance(progress_data, str):
+                import json as _json
+                progress_data = _json.loads(progress_data)
+            return {"user_id": user_id, "progress": progress_data}
         
-        return {"user_id": user_id, "progress": progress_by_module}
+        return {"user_id": user_id, "progress": {}}
     except Exception as e:
         print(f"[Progress Error] {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -1761,6 +1882,7 @@ async def submit_quiz(submission: QuizSubmission):
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
+        _ensure_user_profile(supabase, submission.user_id, submission.display_name)
         percentage = (submission.score / submission.total_questions) * 100 if submission.total_questions > 0 else 0
         
         if submission.is_final_quiz:
@@ -1859,80 +1981,123 @@ async def get_quiz_scores(user_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# Seed community users — realistic names/emails shown on leaderboard & social
+SEED_USERS = [
+    {"id": "seed-01", "username": "sarah.m",       "avatar_color": "bg-violet-500",  "total_score": 58, "modules_completed": 4, "quizzes_completed": 19, "average_score": 94, "joined_date": "2025-11-02", "is_online": True,  "last_activity": "Finished Applied Investing"},
+    {"id": "seed-02", "username": "jchen_99",       "avatar_color": "bg-blue-500",    "total_score": 52, "modules_completed": 3, "quizzes_completed": 16, "average_score": 91, "joined_date": "2025-11-10", "is_online": False, "last_activity": "Scored 95% on Risk Quiz"},
+    {"id": "seed-03", "username": "mike.ramirez",   "avatar_color": "bg-green-500",   "total_score": 47, "modules_completed": 3, "quizzes_completed": 15, "average_score": 90, "joined_date": "2025-11-14", "is_online": True,  "last_activity": "Learning about ETFs"},
+    {"id": "seed-04", "username": "priya.k",        "avatar_color": "bg-pink-500",    "total_score": 41, "modules_completed": 3, "quizzes_completed": 13, "average_score": 88, "joined_date": "2025-12-01", "is_online": True,  "last_activity": "Exploring Investor Psychology"},
+    {"id": "seed-05", "username": "david.l",        "avatar_color": "bg-yellow-500",  "total_score": 35, "modules_completed": 2, "quizzes_completed": 11, "average_score": 86, "joined_date": "2025-12-08", "is_online": False, "last_activity": "Completed Foundation"},
+    {"id": "seed-06", "username": "emma.w",         "avatar_color": "bg-cyan-500",    "total_score": 28, "modules_completed": 2, "quizzes_completed": 9,  "average_score": 84, "joined_date": "2025-12-15", "is_online": True,  "last_activity": "Using Stock Screener"},
+    {"id": "seed-07", "username": "alex.t",         "avatar_color": "bg-orange-500",  "total_score": 22, "modules_completed": 1, "quizzes_completed": 7,  "average_score": 82, "joined_date": "2026-01-04", "is_online": False, "last_activity": "Learning Compounding"},
+    {"id": "seed-08", "username": "nina.h",         "avatar_color": "bg-purple-500",  "total_score": 16, "modules_completed": 1, "quizzes_completed": 5,  "average_score": 80, "joined_date": "2026-01-12", "is_online": True,  "last_activity": "Working on Risk Management"},
+    {"id": "seed-09", "username": "ryan.g",         "avatar_color": "bg-red-500",     "total_score": 10, "modules_completed": 1, "quizzes_completed": 3,  "average_score": 78, "joined_date": "2026-01-20", "is_online": False, "last_activity": "Just started Foundations"},
+    {"id": "seed-10", "username": "olivia.s",       "avatar_color": "bg-teal-500",    "total_score": 5,  "modules_completed": 0, "quizzes_completed": 2,  "average_score": 75, "joined_date": "2026-02-01", "is_online": True,  "last_activity": "Signed up today"},
+    {"id": "seed-11", "username": "james.p",        "avatar_color": "bg-indigo-500",  "total_score": 44, "modules_completed": 3, "quizzes_completed": 14, "average_score": 89, "joined_date": "2025-11-20", "is_online": True,  "last_activity": "Studying Tax Planning"},
+    {"id": "seed-12", "username": "zoe.martinez",   "avatar_color": "bg-emerald-500", "total_score": 33, "modules_completed": 2, "quizzes_completed": 10, "average_score": 85, "joined_date": "2025-12-05", "is_online": False, "last_activity": "Completed Market Dynamics"},
+]
+
+AVATAR_COLORS = [
+    "bg-yellow-500", "bg-blue-500", "bg-green-500", "bg-purple-500", "bg-pink-500",
+    "bg-cyan-500", "bg-orange-500", "bg-red-500", "bg-indigo-500", "bg-teal-500",
+    "bg-emerald-500", "bg-violet-500", "bg-amber-500", "bg-rose-500", "bg-lime-500"
+]
+
+
 @app.get("/api/leaderboard")
-async def get_leaderboard(module_id: Optional[str] = None, limit: int = 20):
-    """Get leaderboard rankings."""
+async def get_leaderboard(module_id: Optional[str] = None, limit: int = 50):
+    """Get leaderboard — merges real Supabase users with seed community users."""
     supabase = get_supabase()
-    if not supabase:
-        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    # Start with seed users as the base (gives the leaderboard a populated feel)
+    combined = [dict(u) for u in SEED_USERS]
     
     try:
-        if module_id:
-            # Module-specific leaderboard
-            result = supabase.table("module_quiz_scores").select(
-                "user_id, best_score, best_percentage, attempts"
-            ).eq("module_id", module_id).order("best_score", desc=True).limit(limit).execute()
-            
-            leaderboard = []
-            for i, entry in enumerate(result.data):
-                # Get display name
-                profile = supabase.table("user_profiles").select("display_name").eq("user_id", entry["user_id"]).execute()
-                display_name = profile.data[0]["display_name"] if profile.data else f"User {entry['user_id'][:8]}"
+        if supabase:
+            if module_id:
+                # Module-specific leaderboard
+                result = supabase.table("module_quiz_scores").select(
+                    "user_id, best_score, best_percentage, attempts"
+                ).eq("module_id", module_id).order("best_score", desc=True).limit(limit).execute()
                 
-                leaderboard.append({
-                    "rank": i + 1,
-                    "user_id": entry["user_id"],
-                    "display_name": display_name,
-                    "score": entry["best_score"],
-                    "percentage": entry["best_percentage"],
-                    "attempts": entry["attempts"]
-                })
-        else:
-            # Global leaderboard - aggregate all module scores (no RPC needed)
-            scores = supabase.table("module_quiz_scores").select("user_id, best_score, best_percentage").execute()
-            
-            user_totals = {}
-            for s in (scores.data or []):
-                uid = s["user_id"]
-                if uid not in user_totals:
-                    user_totals[uid] = {"total_score": 0, "total_pct": 0, "count": 0}
-                user_totals[uid]["total_score"] += s.get("best_score", 0)
-                user_totals[uid]["total_pct"] += s.get("best_percentage", 0)
-                user_totals[uid]["count"] += 1
-            
-            # Sort by total score
-            sorted_users = sorted(user_totals.items(), key=lambda x: x[1]["total_score"], reverse=True)[:limit]
-            
-            leaderboard = []
-            for i, (uid, data) in enumerate(sorted_users):
-                profile = supabase.table("user_profiles").select("display_name").eq("user_id", uid).execute()
-                display_name = profile.data[0]["display_name"] if profile.data else f"User {uid[:8]}"
+                for entry in (result.data or []):
+                    uid = entry["user_id"]
+                    profile = supabase.table("user_profiles").select("display_name").eq("user_id", uid).execute()
+                    display_name = profile.data[0]["display_name"] if profile.data else f"User {uid[:8]}"
+                    
+                    combined.append({
+                        "id": uid,
+                        "user_id": uid,
+                        "username": display_name,
+                        "avatar_color": AVATAR_COLORS[len(combined) % len(AVATAR_COLORS)],
+                        "total_score": entry.get("best_score", 0),
+                        "quizzes_completed": entry.get("attempts", 1),
+                        "modules_completed": 1,
+                        "average_score": round(entry.get("best_percentage", 0)),
+                        "is_real": True,
+                    })
+            else:
+                # Global leaderboard — aggregate lesson + module quiz scores
+                lesson_scores = supabase.table("lesson_quiz_scores").select("*").execute()
+                module_scores = supabase.table("module_quiz_scores").select("*").execute()
+                profiles = supabase.table("user_profiles").select("*").execute()
                 
-                leaderboard.append({
-                    "rank": i + 1,
-                    "user_id": uid,
-                    "display_name": display_name,
-                    "total_score": data["total_score"],
-                    "avg_percentage": round(data["total_pct"] / data["count"], 1) if data["count"] > 0 else 0,
-                    "modules_completed": data["count"]
-                })
-        
-        return {"leaderboard": leaderboard, "module_id": module_id}
+                profile_lookup = {p["user_id"]: p for p in (profiles.data or [])}
+                
+                user_data = {}
+                for score in (lesson_scores.data or []):
+                    uid = score["user_id"]
+                    if uid not in user_data:
+                        user_data[uid] = {"total_score": 0, "quizzes_completed": 0, "total_pct": 0}
+                    user_data[uid]["total_score"] += score.get("score", 0)
+                    user_data[uid]["quizzes_completed"] += 1
+                    user_data[uid]["total_pct"] += score.get("percentage", 0)
+                
+                for score in (module_scores.data or []):
+                    uid = score["user_id"]
+                    if uid not in user_data:
+                        user_data[uid] = {"total_score": 0, "quizzes_completed": 0, "total_pct": 0}
+                    user_data[uid]["total_score"] += score.get("score", 0)
+                    user_data[uid]["quizzes_completed"] += 1
+                    user_data[uid]["total_pct"] += score.get("percentage", 0)
+                
+                for uid, data in user_data.items():
+                    profile = profile_lookup.get(uid, {})
+                    display_name = profile.get("display_name") or f"User {uid[:8]}"
+                    avg_score = round(data["total_pct"] / data["quizzes_completed"]) if data["quizzes_completed"] > 0 else 0
+                    
+                    combined.append({
+                        "id": uid,
+                        "user_id": uid,
+                        "username": display_name,
+                        "avatar_color": AVATAR_COLORS[len(combined) % len(AVATAR_COLORS)],
+                        "total_score": data["total_score"],
+                        "quizzes_completed": data["quizzes_completed"],
+                        "modules_completed": data["quizzes_completed"] // 5,
+                        "average_score": avg_score,
+                        "is_real": True,
+                    })
     except Exception as e:
         print(f"[Leaderboard Error] {e}")
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+    
+    # Sort by total_score descending, assign ranks
+    combined.sort(key=lambda x: x.get("total_score", 0), reverse=True)
+    for i, entry in enumerate(combined[:limit]):
+        entry["rank"] = i + 1
+    
+    return combined[:limit]
 
 
 @app.post("/api/profile")
 async def update_profile(user_id: str, display_name: str):
-    """Update user profile."""
+    """Update user profile (also ensures public.users row exists)."""
     supabase = get_supabase()
     if not supabase:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
+        _ensure_user_profile(supabase, user_id, display_name)
+        
         result = supabase.table("user_profiles").upsert({
             "user_id": user_id,
             "display_name": display_name,
@@ -1945,107 +2110,20 @@ async def update_profile(user_id: str, display_name: str):
 
 
 # =============================================================================
-# Leaderboard & Social Endpoints
+# Social Endpoints (leaderboard is defined above with SEED_USERS)
 # =============================================================================
-
-# Sample users data for demo (will be returned if no real data exists)
-SAMPLE_USERS = [
-    {"id": "sample-1", "username": "InvestorPro", "avatar_color": "bg-yellow-500", "total_score": 2850, "modules_completed": 3, "quizzes_completed": 18, "average_score": 94, "joined_date": "2024-01-15", "is_online": True, "last_activity": "Completed Advanced Module"},
-    {"id": "sample-2", "username": "WealthBuilder", "avatar_color": "bg-blue-500", "total_score": 2720, "modules_completed": 3, "quizzes_completed": 17, "average_score": 91, "joined_date": "2024-02-01", "is_online": True, "last_activity": "Scored 95% on Risk Quiz"},
-    {"id": "sample-3", "username": "StockSavvy", "avatar_color": "bg-green-500", "total_score": 2580, "modules_completed": 3, "quizzes_completed": 16, "average_score": 89, "joined_date": "2024-01-20", "is_online": False, "last_activity": "Learning about ETFs"},
-    {"id": "sample-4", "username": "MarketMaster", "avatar_color": "bg-purple-500", "total_score": 2340, "modules_completed": 2, "quizzes_completed": 15, "average_score": 87, "joined_date": "2024-02-10", "is_online": True, "last_activity": "Started Investor Insight"},
-    {"id": "sample-5", "username": "DividendKing", "avatar_color": "bg-pink-500", "total_score": 2180, "modules_completed": 2, "quizzes_completed": 14, "average_score": 85, "joined_date": "2024-01-25", "is_online": False, "last_activity": "Completed Foundation"},
-    {"id": "sample-6", "username": "IndexFundFan", "avatar_color": "bg-cyan-500", "total_score": 1950, "modules_completed": 2, "quizzes_completed": 13, "average_score": 83, "joined_date": "2024-02-15", "is_online": True, "last_activity": "Exploring Stock Screener"},
-    {"id": "sample-7", "username": "CompoundKing", "avatar_color": "bg-orange-500", "total_score": 1820, "modules_completed": 2, "quizzes_completed": 12, "average_score": 81, "joined_date": "2024-02-20", "is_online": False, "last_activity": "Learning Compounding"},
-    {"id": "sample-8", "username": "RetireEarly", "avatar_color": "bg-red-500", "total_score": 1650, "modules_completed": 1, "quizzes_completed": 11, "average_score": 79, "joined_date": "2024-03-01", "is_online": True, "last_activity": "Just joined!"},
-    {"id": "sample-9", "username": "BudgetBoss", "avatar_color": "bg-indigo-500", "total_score": 1480, "modules_completed": 1, "quizzes_completed": 10, "average_score": 77, "joined_date": "2024-02-28", "is_online": False, "last_activity": "Studying Risk Management"},
-    {"id": "sample-10", "username": "NewInvestor", "avatar_color": "bg-teal-500", "total_score": 1200, "modules_completed": 1, "quizzes_completed": 8, "average_score": 75, "joined_date": "2024-03-05", "is_online": True, "last_activity": "Started Foundation"},
-]
-
-AVATAR_COLORS = [
-    "bg-yellow-500", "bg-blue-500", "bg-green-500", "bg-purple-500", "bg-pink-500",
-    "bg-cyan-500", "bg-orange-500", "bg-red-500", "bg-indigo-500", "bg-teal-500",
-    "bg-emerald-500", "bg-violet-500", "bg-amber-500", "bg-rose-500", "bg-lime-500"
-]
-
-
-@app.get("/api/leaderboard")
-async def get_full_leaderboard(limit: int = 50):
-    """Get full leaderboard with all quiz scores."""
-    supabase = get_supabase()
-    
-    try:
-        if supabase:
-            # Try to get real data from Supabase
-            # Aggregate all quiz scores by user
-            lesson_scores = supabase.table("lesson_quiz_scores").select("*").execute()
-            module_scores = supabase.table("module_quiz_scores").select("*").execute()
-            profiles = supabase.table("user_profiles").select("*").execute()
-            
-            # Build profile lookup
-            profile_lookup = {p["user_id"]: p for p in (profiles.data or [])}
-            
-            # Aggregate scores
-            user_data = {}
-            
-            for score in (lesson_scores.data or []):
-                uid = score["user_id"]
-                if uid not in user_data:
-                    user_data[uid] = {"total_score": 0, "quizzes_completed": 0, "total_pct": 0}
-                user_data[uid]["total_score"] += score.get("score", 0)
-                user_data[uid]["quizzes_completed"] += 1
-                user_data[uid]["total_pct"] += score.get("percentage", 0)
-            
-            for score in (module_scores.data or []):
-                uid = score["user_id"]
-                if uid not in user_data:
-                    user_data[uid] = {"total_score": 0, "quizzes_completed": 0, "total_pct": 0}
-                user_data[uid]["total_score"] += score.get("score", 0)
-                user_data[uid]["quizzes_completed"] += 1
-                user_data[uid]["total_pct"] += score.get("percentage", 0)
-            
-            if user_data:
-                # Sort by total score
-                sorted_users = sorted(user_data.items(), key=lambda x: x[1]["total_score"], reverse=True)[:limit]
-                
-                leaderboard = []
-                for i, (uid, data) in enumerate(sorted_users):
-                    profile = profile_lookup.get(uid, {})
-                    display_name = profile.get("display_name") or f"User {uid[:8]}"
-                    avatar_color = AVATAR_COLORS[i % len(AVATAR_COLORS)]
-                    
-                    avg_score = round(data["total_pct"] / data["quizzes_completed"]) if data["quizzes_completed"] > 0 else 0
-                    
-                    leaderboard.append({
-                        "rank": i + 1,
-                        "user_id": uid,
-                        "username": display_name,
-                        "avatar_color": avatar_color,
-                        "total_score": data["total_score"],
-                        "quizzes_completed": data["quizzes_completed"],
-                        "modules_completed": data["quizzes_completed"] // 5,  # Approximate
-                        "average_score": avg_score
-                    })
-                
-                return leaderboard
-        
-        # Return sample data if no real data
-        return SAMPLE_USERS
-        
-    except Exception as e:
-        print(f"[Leaderboard Error] {e}")
-        # Return sample data on error
-        return SAMPLE_USERS
 
 
 @app.get("/api/users")
 async def get_community_users(limit: int = 50):
-    """Get community users for social page."""
+    """Get community users for social page — merges real users with seed data."""
     supabase = get_supabase()
+    
+    # Start with seed users
+    combined = [dict(u) for u in SEED_USERS]
     
     try:
         if supabase:
-            # Get user profiles with their scores
             profiles = supabase.table("user_profiles").select("*").limit(limit).execute()
             lesson_scores = supabase.table("lesson_quiz_scores").select("*").execute()
             module_scores = supabase.table("module_quiz_scores").select("*").execute()
@@ -2066,32 +2144,28 @@ async def get_community_users(limit: int = 50):
                 user_scores[uid]["total_score"] += score.get("score", 0)
                 user_scores[uid]["quizzes_completed"] += 1
             
-            if profiles.data and len(profiles.data) > 0:
-                users = []
-                for i, profile in enumerate(profiles.data):
-                    uid = profile["user_id"]
-                    scores = user_scores.get(uid, {"total_score": 0, "quizzes_completed": 0})
-                    
-                    users.append({
-                        "id": uid,
-                        "username": profile.get("display_name") or f"User {uid[:8]}",
-                        "avatar_color": AVATAR_COLORS[i % len(AVATAR_COLORS)],
-                        "total_score": scores["total_score"],
-                        "modules_completed": scores["quizzes_completed"] // 5,
-                        "quizzes_completed": scores["quizzes_completed"],
-                        "joined_date": profile.get("created_at", "2024-01-01")[:10],
-                        "is_online": i % 3 == 0,  # Simulate online status
-                        "last_activity": "Learning on FinLearn AI"
-                    })
+            for profile in (profiles.data or []):
+                uid = profile["user_id"]
+                scores = user_scores.get(uid, {"total_score": 0, "quizzes_completed": 0})
                 
-                return users
-        
-        # Return sample data
-        return SAMPLE_USERS
-        
+                combined.append({
+                    "id": uid,
+                    "username": profile.get("display_name") or f"User {uid[:8]}",
+                    "avatar_color": AVATAR_COLORS[len(combined) % len(AVATAR_COLORS)],
+                    "total_score": scores["total_score"],
+                    "modules_completed": scores["quizzes_completed"] // 5,
+                    "quizzes_completed": scores["quizzes_completed"],
+                    "joined_date": profile.get("created_at", "2024-01-01")[:10],
+                    "is_online": True,
+                    "last_activity": "Learning on FinLearn AI",
+                    "is_real": True,
+                })
     except Exception as e:
         print(f"[Users Error] {e}")
-        return SAMPLE_USERS
+    
+    # Sort by score descending
+    combined.sort(key=lambda x: x.get("total_score", 0), reverse=True)
+    return combined[:limit]
 
 
 @app.get("/api/user-stats/{user_id}")
@@ -2268,6 +2342,9 @@ async def analyze_universe(request: AnalyzeUniverseRequest):
     client = RESTClient(polygon_key)
     
     analyzer = StockUniverseAnalyzer(client)
+    # Inject the prewarmed FinBERT model so the analyzer doesn't load it again
+    if _sentiment_analyzer is not None and _news_fetcher is not None:
+        analyzer.set_sentiment_models(_sentiment_analyzer, _news_fetcher)
     
     tickers = request.tickers or SP500_TICKERS
     job_id = f"analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -2517,6 +2594,34 @@ async def optimize_portfolio(request: OptimizePortfolioRequest):
 async def analyze_portfolio(request: OptimizePortfolioRequest):
     """Analyze a portfolio with given weights (no optimization)."""
     return await optimize_portfolio(request)  # Same endpoint, just requires custom_weights
+
+
+# =============================================================================
+# GA-Based ETF Portfolio Optimizer
+# =============================================================================
+
+class ETFAllocationRequest(BaseModel):
+    answers: Dict[str, Any]
+    required_etfs: Optional[List[str]] = None
+    simulate: Optional[Dict[str, Any]] = None
+
+@app.post("/api/etf/optimize")
+async def optimize_etf_allocation_endpoint(request: ETFAllocationRequest):
+    """
+    Endpoint for GA-based ETF portfolio optimization and optional Monte Carlo simulation.
+    """
+    try:
+        from ga_etf_optimizer import optimize_etf_portfolio
+        result = optimize_etf_portfolio(
+            answers=request.answers,
+            required_etfs=request.required_etfs,
+            simulate=request.simulate,
+        )
+        return result
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # =============================================================================

@@ -4,12 +4,15 @@ import { Trophy, Medal, Award, Crown, Loader2 } from 'lucide-react';
 interface LeaderboardEntry {
   rank: number;
   user_id: string;
-  display_name: string;
+  display_name?: string;
+  username?: string;
   total_score?: number;
   score?: number;
   percentage?: number;
   avg_percentage?: number;
+  average_score?: number;
   modules_completed?: number;
+  quizzes_completed?: number;
   attempts?: number;
 }
 
@@ -39,7 +42,9 @@ export const Leaderboard = ({ moduleId, currentUserId }: LeaderboardProps) => {
       if (!response.ok) throw new Error('Failed to fetch leaderboard');
       
       const data = await response.json();
-      setEntries(data.leaderboard || []);
+      // Backend returns a list directly (or {leaderboard: [...]})
+      const entries = Array.isArray(data) ? data : (data.leaderboard || []);
+      setEntries(entries);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load leaderboard');
     } finally {
@@ -101,8 +106,9 @@ export const Leaderboard = ({ moduleId, currentUserId }: LeaderboardProps) => {
       
       {entries.map((entry) => {
         const isCurrentUser = entry.user_id === currentUserId;
+        const displayName = entry.display_name || entry.username || `User`;
         const score = entry.total_score ?? entry.score ?? 0;
-        const pct = entry.avg_percentage ?? entry.percentage ?? 0;
+        const pct = entry.avg_percentage ?? entry.average_score ?? entry.percentage ?? 0;
         
         return (
           <div
@@ -117,7 +123,7 @@ export const Leaderboard = ({ moduleId, currentUserId }: LeaderboardProps) => {
             
             <div className="flex-1 min-w-0">
               <p className={`font-medium truncate ${isCurrentUser ? 'text-primary' : 'text-white'}`}>
-                {entry.display_name}
+                {displayName}
                 {isCurrentUser && <span className="text-xs ml-2 text-primary">(You)</span>}
               </p>
               {entry.modules_completed !== undefined && (

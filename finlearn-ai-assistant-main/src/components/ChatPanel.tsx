@@ -218,11 +218,6 @@ export function ChatPanel({ defaultOpen = false }: ChatPanelProps) {
                       >
                         <span className="font-medium text-primary">[{idx + 1}]</span>{" "}
                         <span className="text-foreground/80">{source.title}</span>
-                        {source.score && (
-                          <span className="text-muted-foreground ml-1">
-                            ({Math.round(source.score * 100)}% match)
-                          </span>
-                        )}
                       </div>
                     ))}
                   </div>

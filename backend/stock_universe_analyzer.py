@@ -261,32 +261,36 @@ class StockUniverseAnalyzer:
             print(f"[Price Data] Error fetching {ticker}: {e}")
             return None
     
+    def set_sentiment_models(self, sentiment_analyzer, news_fetcher):
+        """Inject the prewarmed FinBERT sentiment analyzer and news fetcher."""
+        self._sentiment_analyzer = sentiment_analyzer
+        self._news_fetcher = news_fetcher
+
     def fetch_sentiment(self, ticker: str) -> Optional[Dict[str, Any]]:
         """Fetch news sentiment from Polygon using NewsFetcher (FinBERT)."""
         try:
             # Try to use the existing NewsFetcher and SentimentAnalyzer if available
             # This uses FinBERT for better sentiment analysis
             try:
-                import sys
-                from pathlib import Path
-                chart_vision_path = Path(__file__).parent.parent / "chart-vision"
-                if str(chart_vision_path) not in sys.path:
-                    sys.path.insert(0, str(chart_vision_path))
-                
-                from utils.news_fetcher import NewsFetcher
-                from models.sentiment_analyzer import SentimentAnalyzer
-                
-                # Initialize if not already done
-                if not hasattr(self, '_news_fetcher') or self._news_fetcher is None:
-                    polygon_key = os.environ.get('POLYGON_API_KEY')
-                    if polygon_key:
-                        self._news_fetcher = NewsFetcher(polygon_key)
-                    else:
-                        self._news_fetcher = None
-                
-                if not hasattr(self, '_sentiment_analyzer') or self._sentiment_analyzer is None:
-                    self._sentiment_analyzer = SentimentAnalyzer()
-                    self._sentiment_analyzer.load_model()
+                # Use injected (prewarmed) models if available; otherwise lazy-load
+                if self._sentiment_analyzer is None or self._news_fetcher is None:
+                    import sys
+                    from pathlib import Path
+                    chart_vision_path = Path(__file__).parent.parent / "chart-vision"
+                    if str(chart_vision_path) not in sys.path:
+                        sys.path.insert(0, str(chart_vision_path))
+                    
+                    from utils.news_fetcher import NewsFetcher
+                    from models.sentiment_analyzer import SentimentAnalyzer
+                    
+                    if self._news_fetcher is None:
+                        polygon_key = os.environ.get('POLYGON_API_KEY')
+                        if polygon_key:
+                            self._news_fetcher = NewsFetcher(polygon_key)
+                    
+                    if self._sentiment_analyzer is None:
+                        self._sentiment_analyzer = SentimentAnalyzer()
+                        self._sentiment_analyzer.load_model()
                 
                 if self._news_fetcher and self._sentiment_analyzer:
                     # Fetch news using NewsFetcher

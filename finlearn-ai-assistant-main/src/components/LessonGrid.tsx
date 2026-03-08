@@ -24,7 +24,7 @@ const topics = [
     title: "Applied Investing",
     description: "Build your actual portfolio with asset allocation strategies.",
     level: "Advanced",
-    lessons: 5,
+    lessons: 6,
   },
 ];
 
