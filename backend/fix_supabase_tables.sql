@@ -18,7 +18,7 @@ SELECT
   SPLIT_PART(email, '@', 1),
   'supabase_managed',
   'supabase_managed',
-  NOW()::text
+  NOW()
 FROM auth.users
 WHERE id NOT IN (SELECT id FROM public.users)
 ON CONFLICT (id) DO NOTHING;
@@ -64,7 +64,7 @@ CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO public.users (id, email, name, password_hash, password_salt, created_at)
-  VALUES (NEW.id, NEW.email, SPLIT_PART(NEW.email, '@', 1), 'supabase_managed', 'supabase_managed', NOW()::text)
+  VALUES (NEW.id, NEW.email, SPLIT_PART(NEW.email, '@', 1), 'supabase_managed', 'supabase_managed', NOW())
   ON CONFLICT (id) DO NOTHING;
   
   INSERT INTO user_profiles (user_id, display_name)
