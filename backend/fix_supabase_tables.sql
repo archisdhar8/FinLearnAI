@@ -11,13 +11,14 @@ ALTER TABLE user_progress
   FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
 
 -- Step 2: Backfill public.users from auth.users (for any existing users)
-INSERT INTO public.users (id, email, name, password_hash, password_salt)
+INSERT INTO public.users (id, email, name, password_hash, password_salt, created_at)
 SELECT 
   id, 
   email, 
   SPLIT_PART(email, '@', 1),
   'supabase_managed',
-  'supabase_managed'
+  'supabase_managed',
+  NOW()::text
 FROM auth.users
 WHERE id NOT IN (SELECT id FROM public.users)
 ON CONFLICT (id) DO NOTHING;
@@ -62,14 +63,17 @@ CREATE POLICY "Allow all access to public users" ON public.users
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.users (id, email, name, password_hash, password_salt)
-  VALUES (NEW.id, NEW.email, SPLIT_PART(NEW.email, '@', 1), 'supabase_managed', 'supabase_managed')
+  INSERT INTO public.users (id, email, name, password_hash, password_salt, created_at)
+  VALUES (NEW.id, NEW.email, SPLIT_PART(NEW.email, '@', 1), 'supabase_managed', 'supabase_managed', NOW()::text)
   ON CONFLICT (id) DO NOTHING;
   
   INSERT INTO user_profiles (user_id, display_name)
   VALUES (NEW.id, SPLIT_PART(NEW.email, '@', 1))
   ON CONFLICT (user_id) DO NOTHING;
   
+  RETURN NEW;
+EXCEPTION WHEN OTHERS THEN
+  RAISE WARNING 'handle_new_user trigger failed for %: %', NEW.id, SQLERRM;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

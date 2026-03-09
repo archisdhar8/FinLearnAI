@@ -1766,6 +1766,7 @@ def _ensure_user_profile(sb_client, user_id: str, display_name: Optional[str] = 
                     "name": fallback_name,
                     "password_hash": "supabase_managed",
                     "password_salt": "supabase_managed",
+                    "created_at": datetime.utcnow().isoformat(),
                 }).execute()
                 print(f"[Supabase] Auto-created public.users row for {user_id[:8]}")
             except Exception:
