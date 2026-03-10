@@ -1,0 +1,25 @@
+{
+  "runs": 30,
+  "pass_rate": {
+    "mean": 0.94,
+    "std": 0.0,
+    "min": 0.94,
+    "max": 0.94
+  },
+  "mean_similarity": {
+    "mean": 0.8148040000000001,
+    "std": 0.0,
+    "min": 0.8148040000000001,
+    "max": 0.8148040000000001
+  },
+  "mean_key_fact_coverage": {
+    "mean": 0.068194,
+    "std": 0.0,
+    "min": 0.068194,
+    "max": 0.068194
+  },
+  "outputs": {
+    "run_summaries_jsonl": "rag_validation/validation_runs/run_summaries.jsonl",
+    "results_dir": "rag_validation/validation_runs"
+  }
+}
