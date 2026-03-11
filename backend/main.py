@@ -1345,29 +1345,30 @@ class StockAnalysisResponse(BaseModel):
 def generate_ai_stock_analysis(ticker: str, data: dict) -> str:
     """Generate a short AI analysis paragraph using Gemini."""
     try:
-        # Build the prompt with all available data
-        prompt = f"""You are a concise financial analyst. Write a 2-3 sentence analysis of {ticker} stock based on this data:
+        # Build the prompt with all available data (system prompt handles analyst role)
+        prompt = f"""Write a 2-3 sentence analysis of {ticker} stock based on this data:
 
 Price: ${data.get('price', 'N/A')} ({data.get('change_pct', 0):+.2f}% today)
 30-Day Trend: {data.get('trend', 'unknown')} ({data.get('trend_confidence', 0):.0f}% confidence)
 AI Signal: {data.get('signal', 'HOLD')} ({data.get('signal_strength', 50):.0f}% strength)
 Support Level: ${data.get('support', 'N/A')}
 Resistance Level: ${data.get('resistance', 'N/A')}
-News Sentiment: {data.get('sentiment', 'neutral')} ({data.get('news_count', 0)} articles)
+News Sentiment: {data.get('sentiment', 'neutral')} ({data.get('news_count', 0)} articles)"""
 
-Write a brief, actionable summary for an investor. Be specific about the numbers. No disclaimers or hedging language. Start directly with the analysis."""
-
-        # Use the LLM provider
+        # Use dedicated stock analysis function (bypasses RAG refusal logic)
         import sys
         sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'quantcademy-app'))
-        from rag.llm_provider import chat_with_llm
+        from rag.llm_provider import generate_stock_analysis
         
-        response = chat_with_llm(prompt, stream=False)
+        response = generate_stock_analysis(prompt)
         
         # Clean up response
-        if isinstance(response, str):
+        if response and isinstance(response, str):
             return response.strip()
-        return str(response).strip()
+        if response:
+            return str(response).strip()
+        # Empty response — fall through to template fallback
+        raise ValueError("Empty LLM response")
         
     except Exception as e:
         print(f"[AI Analysis Error] {ticker}: {e}")

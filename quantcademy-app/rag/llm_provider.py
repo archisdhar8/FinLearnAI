@@ -63,7 +63,7 @@ except ImportError:
 
 
 # System prompt for capstone-grade RAG tutor
-SYSTEM_PROMPT = """You are QuantCademy AI, a capstone-grade investment education tutor. You provide CITATION-BACKED answers grounded in authoritative sources.
+SYSTEM_PROMPT = """You are FinLearnAI, a capstone-grade investment education tutor. You provide CITATION-BACKED answers grounded in authoritative sources.
 
 ## YOUR ROLE
 - Teach investing concepts accurately and simply
@@ -115,6 +115,9 @@ STOCK_PICKING_TRIGGERS = [
     "meme stock", "penny stock"
 ]
 
+# System prompt for stock screener analysis (no refusal — this tool is designed for stock analysis)
+STOCK_ANALYSIS_SYSTEM_PROMPT = """You are FinLearnAI, a concise financial analyst. Provide brief, actionable stock analysis summaries based on the data provided. Be specific about numbers. No disclaimers or hedging language. Start directly with the analysis."""
+
 STOCK_PICKING_REFUSAL = """
 ## I Can't Recommend Specific Stocks 🚫
 
@@ -162,6 +165,28 @@ def _should_refuse_stock_picking(query: str) -> bool:
     """Check if the query is asking for stock picks."""
     query_lower = query.lower()
     return any(trigger in query_lower for trigger in STOCK_PICKING_TRIGGERS)
+
+
+def generate_stock_analysis(prompt: str) -> str:
+    """
+    Generate stock analysis summary using a dedicated analyst system prompt.
+    Bypasses RAG refusal logic — the Stock Screener tool is designed to provide
+    BUY/HOLD/SELL analysis for individual stocks.
+    """
+    try:
+        if LLM_PROVIDER == "gemini" and GEMINI_AVAILABLE:
+            if _gemini_client is not None:
+                out = _chat_with_gemini_new_sdk(prompt, system_prompt_override=STOCK_ANALYSIS_SYSTEM_PROMPT, stream=False)
+                return out if isinstance(out, str) else "".join(out)
+            if genai is not None and hasattr(genai, 'GenerativeModel'):
+                out = _chat_with_gemini_old_sdk(prompt, system_prompt_override=STOCK_ANALYSIS_SYSTEM_PROMPT, stream=False)
+                return out if isinstance(out, str) else "".join(out)
+        if OLLAMA_AVAILABLE:
+            out = _chat_with_ollama(prompt, system_prompt_override=STOCK_ANALYSIS_SYSTEM_PROMPT, stream=False)
+            return out if isinstance(out, str) else "".join(out)
+    except Exception:
+        pass
+    return ""
 
 
 def check_llm_status() -> dict:
@@ -340,14 +365,16 @@ def _chat_with_gemini(
 def _chat_with_gemini_new_sdk(
     message: str,
     conversation_history: list = None,
-    stream: bool = True
+    stream: bool = True,
+    system_prompt_override: str = None
 ) -> Union[Generator[str, None, None], str]:
     """Chat using the new google-genai SDK (Client API)."""
     try:
+        system_prompt = system_prompt_override if system_prompt_override else SYSTEM_PROMPT
         # Build contents with conversation history
         contents = []
-        if SYSTEM_PROMPT:
-            contents.append({"role": "user", "parts": [{"text": f"[System] {SYSTEM_PROMPT}"}]})
+        if system_prompt:
+            contents.append({"role": "user", "parts": [{"text": f"[System] {system_prompt}"}]})
             contents.append({"role": "model", "parts": [{"text": "Understood. I will follow these instructions."}]})
         
         if conversation_history:
@@ -394,13 +421,15 @@ def _chat_with_gemini_new_sdk(
 def _chat_with_gemini_old_sdk(
     message: str,
     conversation_history: list = None,
-    stream: bool = True
+    stream: bool = True,
+    system_prompt_override: str = None
 ) -> Union[Generator[str, None, None], str]:
     """Chat using the old google-generativeai SDK (GenerativeModel API)."""
     try:
+        system_prompt = system_prompt_override if system_prompt_override else SYSTEM_PROMPT
         model = genai.GenerativeModel(
             model_name=GEMINI_MODEL,
-            system_instruction=SYSTEM_PROMPT
+            system_instruction=system_prompt
         )
         
         # Build chat history
@@ -438,13 +467,15 @@ def _chat_with_gemini_old_sdk(
 def _chat_with_ollama(
     message: str,
     conversation_history: list = None,
-    stream: bool = True
+    stream: bool = True,
+    system_prompt_override: str = None
 ) -> Union[Generator[str, None, None], str]:
     """Chat using Ollama."""
     import requests
     import json
     
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    system_prompt = system_prompt_override if system_prompt_override else SYSTEM_PROMPT
+    messages = [{"role": "system", "content": system_prompt}]
     
     if conversation_history:
         for msg in conversation_history[-6:]:
