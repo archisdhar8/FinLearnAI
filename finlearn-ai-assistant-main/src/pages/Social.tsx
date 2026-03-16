@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { API_URL } from "@/lib/api";
 import {
   ArrowLeft,
   Users,
   Trophy,
   BookOpen,
-  TrendingUp,
   Search,
-  UserPlus,
   MessageCircle,
   Star,
 } from "lucide-react";
@@ -223,8 +222,12 @@ export default function Social() {
                 </div>
 
                 {/* Action */}
-                <button className="p-2 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-primary">
-                  <UserPlus className="w-4 h-4" />
+                <button
+                  onClick={() => navigate(`/messages?with=${encodeURIComponent(user.id)}`)}
+                  className="p-2 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-primary"
+                  title="Message"
+                >
+                  <MessageCircle className="w-4 h-4" />
                 </button>
               </div>
             </div>

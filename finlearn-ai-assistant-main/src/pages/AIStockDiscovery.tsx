@@ -16,7 +16,8 @@ import {
   Plus,
   Settings,
   Download,
-  Save
+  Save,
+  ArrowLeft
 } from "lucide-react";
 import { apiCall } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -295,11 +296,30 @@ export default function AIStockDiscovery() {
   const sectors = Array.from(new Set(allStocks.map(s => s.sector || "Other"))).sort();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="p-2 rounded-lg hover:bg-muted transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-primary/10">
+                <Zap className="w-4 h-4 text-primary" />
+              </div>
+              <span className="font-display text-sm font-semibold">AI Stock Discovery</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-6xl mx-auto px-6 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">AI Stock Discovery & Portfolio Builder</h1>
-          <p className="text-slate-300">
+          <h1 className="font-display text-3xl font-bold mb-2">AI Stock Discovery & Portfolio Builder</h1>
+          <p className="text-muted-foreground">
             Deep analysis of S&P 500 stocks with sector-normalized scoring. Build your custom index.
           </p>
         </div>
@@ -312,7 +332,7 @@ export default function AIStockDiscovery() {
           </TabsList>
 
           <TabsContent value="discovery" className="space-y-4">
-            <Card className="bg-slate-800/50 border-slate-700">
+            <Card className="glass-card rounded-xl">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
@@ -348,14 +368,14 @@ export default function AIStockDiscovery() {
                 {analyzing && (
                   <div className="mb-4">
                     <Progress value={analysisProgress} className="mb-2" />
-                    <p className="text-sm text-slate-400">Analyzing S&P 500 stocks... This may take 15-20 minutes.</p>
+                    <p className="text-sm text-muted-foreground">Analyzing S&P 500 stocks... This may take 15-20 minutes.</p>
                   </div>
                 )}
 
                 {allStocks.length === 0 && !analyzing && (
                   <div className="text-center py-12">
-                    <BarChart3 className="mx-auto h-12 w-12 text-slate-500 mb-4" />
-                    <p className="text-slate-400 mb-4">No analysis results available.</p>
+                    <BarChart3 className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground mb-4">No analysis results available.</p>
                     <Button onClick={startAnalysis}>
                       <Zap className="mr-2 h-4 w-4" />
                       Start S&P 500 Analysis
@@ -372,10 +392,10 @@ export default function AIStockDiscovery() {
                         placeholder="Ticker (e.g. AAPL)"
                         defaultValue=""
                         onKeyDown={(e) => { if (e.key === "Enter") doSearch(); }}
-                        className="bg-slate-700 border-slate-600 w-40"
+                        className="w-40"
                       />
                       <Select value={sectorFilter} onValueChange={(val) => { setSectorFilter(val); sectorRef.current = val; }}>
-                        <SelectTrigger className="bg-slate-700 border-slate-600 w-44">
+                        <SelectTrigger className="w-44">
                           <SelectValue placeholder="All Sectors" />
                         </SelectTrigger>
                         <SelectContent>
@@ -391,7 +411,7 @@ export default function AIStockDiscovery() {
                         placeholder="Min Score"
                         defaultValue=""
                         onKeyDown={(e) => { if (e.key === "Enter") doSearch(); }}
-                        className="bg-slate-700 border-slate-600 w-28"
+                        className="w-28"
                       />
                       <Input
                         ref={maxScoreRef}
@@ -399,10 +419,10 @@ export default function AIStockDiscovery() {
                         placeholder="Max Score"
                         defaultValue=""
                         onKeyDown={(e) => { if (e.key === "Enter") doSearch(); }}
-                        className="bg-slate-700 border-slate-600 w-28"
+                        className="w-28"
                       />
                       <Select value={sortBy} onValueChange={(val) => { setSortBy(val); sortRef.current = val; }}>
-                        <SelectTrigger className="bg-slate-700 border-slate-600 w-48">
+                        <SelectTrigger className="w-48">
                           <SelectValue placeholder="Sort by" />
                         </SelectTrigger>
                         <SelectContent>
@@ -413,7 +433,7 @@ export default function AIStockDiscovery() {
                           <SelectItem value="sentiment">Sentiment (High to Low)</SelectItem>
                         </SelectContent>
                       </Select>
-                      <Button onClick={doSearch} className="bg-purple-600 hover:bg-purple-700">
+                      <Button onClick={doSearch}>
                         <Search className="mr-2 h-4 w-4" />
                         Search
                       </Button>
@@ -439,15 +459,15 @@ export default function AIStockDiscovery() {
 
                     <div className="space-y-2 max-h-[600px] overflow-y-auto">
                       {displayStocks.length === 0 ? (
-                        <div className="text-center py-8 text-slate-400">
+                        <div className="text-center py-8 text-muted-foreground">
                           No stocks match your filters. Try adjusting your search criteria.
                         </div>
                       ) : (
                         displayStocks.map((stock) => (
                           <Card
                             key={stock.ticker}
-                            className={`bg-slate-700/50 border-slate-600 cursor-pointer hover:bg-slate-700 transition-colors ${
-                              selectedStocks.has(stock.ticker) ? "ring-2 ring-purple-500" : ""
+                            className={`glass-card rounded-xl cursor-pointer hover:border-primary/40 transition-colors ${
+                              selectedStocks.has(stock.ticker) ? "ring-2 ring-primary" : ""
                             }`}
                             onClick={() => toggleStockSelection(stock.ticker)}
                           >
@@ -456,32 +476,32 @@ export default function AIStockDiscovery() {
                                 <div className="flex items-center gap-4 flex-1">
                                   <div className="flex items-center gap-2">
                                     {selectedStocks.has(stock.ticker) ? (
-                                      <CheckCircle2 className="h-5 w-5 text-purple-400" />
+                                      <CheckCircle2 className="h-5 w-5 text-primary" />
                                     ) : (
-                                      <div className="h-5 w-5 border-2 border-slate-500 rounded" />
+                                      <div className="h-5 w-5 border-2 border-muted-foreground rounded" />
                                     )}
                                     <span className="font-bold text-lg">{stock.ticker}</span>
                                   </div>
                                   <Badge variant="outline">{stock.sector}</Badge>
                                   <div className="flex items-center gap-1">
-                                    <span className="text-2xl font-bold text-purple-400">
+                                    <span className="text-2xl font-bold text-primary">
                                       {stock.composite_score.toFixed(1)}
                                     </span>
-                                    <span className="text-sm text-slate-400">/100</span>
+                                    <span className="text-sm text-muted-foreground">/100</span>
                                   </div>
-                                  <div className="text-sm text-slate-400">
+                                  <div className="text-sm text-muted-foreground">
                                     Rank: #{stock.overall_rank} ({stock.sector_rank} in {stock.sector})
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-6">
                                   <div className="text-right">
-                                    <div className="text-sm text-slate-400">3M Return</div>
-                                    <div className={`font-semibold ${stock.return_3m >= 0 ? "text-green-400" : "text-red-400"}`}>
+                                    <div className="text-sm text-muted-foreground">3M Return</div>
+                                    <div className={`font-semibold ${stock.return_3m >= 0 ? "text-success" : "text-destructive"}`}>
                                       {stock.return_3m >= 0 ? "+" : ""}{stock.return_3m.toFixed(1)}%
                                     </div>
                                   </div>
                                   <div className="text-right">
-                                    <div className="text-sm text-slate-400">Sentiment</div>
+                                    <div className="text-sm text-muted-foreground">Sentiment</div>
                                     <div className="font-semibold">
                                       {stock.sentiment_score >= 0 ? "+" : ""}{stock.sentiment_score.toFixed(2)}
                                     </div>
@@ -500,7 +520,7 @@ export default function AIStockDiscovery() {
                         ))
                       )}
                     </div>
-                    <div className="text-sm text-slate-400 mt-2 text-center">
+                    <div className="text-sm text-muted-foreground mt-2 text-center">
                       Showing {displayStocks.length} of {allStocks.length} stocks
                     </div>
                   </>
@@ -510,7 +530,7 @@ export default function AIStockDiscovery() {
           </TabsContent>
 
           <TabsContent value="portfolio" className="space-y-4">
-            <Card className="bg-slate-800/50 border-slate-700">
+            <Card className="glass-card rounded-xl">
               <CardHeader>
                 <CardTitle>Portfolio Builder</CardTitle>
                 <CardDescription>
@@ -522,8 +542,8 @@ export default function AIStockDiscovery() {
               <CardContent>
                 {selectedStocks.size === 0 ? (
                   <div className="text-center py-12">
-                    <Target className="mx-auto h-12 w-12 text-slate-500 mb-4" />
-                    <p className="text-slate-400 mb-4">No stocks selected.</p>
+                    <Target className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground mb-4">No stocks selected.</p>
                     <Button onClick={() => setActiveTab("discovery")} variant="outline">
                       Go to Discovery
                     </Button>
@@ -569,32 +589,32 @@ export default function AIStockDiscovery() {
 
                     {portfolioAnalysis && (
                       <div className="space-y-4">
-                        <Card className="bg-slate-700/50 border-slate-600">
+                        <Card className="glass-card rounded-xl">
                           <CardHeader>
                             <CardTitle>Portfolio Analysis</CardTitle>
                           </CardHeader>
                           <CardContent>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                               <div>
-                                <div className="text-sm text-slate-400">Expected Return</div>
-                                <div className="text-2xl font-bold text-green-400">
+                                <div className="text-sm text-muted-foreground">Expected Return</div>
+                                <div className="text-2xl font-bold text-success">
                                   {portfolioAnalysis.analysis.expected_return.toFixed(2)}%
                                 </div>
                               </div>
                               <div>
-                                <div className="text-sm text-slate-400">Volatility (Risk)</div>
-                                <div className="text-2xl font-bold text-yellow-400">
+                                <div className="text-sm text-muted-foreground">Volatility (Risk)</div>
+                                <div className="text-2xl font-bold text-amber-500">
                                   {portfolioAnalysis.analysis.volatility.toFixed(2)}%
                                 </div>
                               </div>
                               <div>
-                                <div className="text-sm text-slate-400">Sharpe Ratio</div>
-                                <div className="text-2xl font-bold text-purple-400">
+                                <div className="text-sm text-muted-foreground">Sharpe Ratio</div>
+                                <div className="text-2xl font-bold text-primary">
                                   {portfolioAnalysis.analysis.sharpe_ratio.toFixed(3)}
                                 </div>
                               </div>
                               <div>
-                                <div className="text-sm text-slate-400">Holdings</div>
+                                <div className="text-sm text-muted-foreground">Holdings</div>
                                 <div className="text-2xl font-bold">
                                   {portfolioAnalysis.analysis.num_holdings}
                                 </div>
@@ -608,9 +628,9 @@ export default function AIStockDiscovery() {
                                   <div key={sector} className="flex items-center justify-between">
                                     <span className="text-sm">{sector}</span>
                                     <div className="flex items-center gap-2">
-                                      <div className="w-32 bg-slate-600 rounded-full h-2">
+                                      <div className="w-32 bg-muted rounded-full h-2">
                                         <div
-                                          className="bg-purple-500 h-2 rounded-full"
+                                          className="bg-primary h-2 rounded-full"
                                           style={{ width: `${weight}%` }}
                                         />
                                       </div>
@@ -645,15 +665,15 @@ export default function AIStockDiscovery() {
           </TabsContent>
 
           <TabsContent value="saved">
-            <Card className="bg-slate-800/50 border-slate-700">
+            <Card className="glass-card rounded-xl">
               <CardHeader>
                 <CardTitle>Saved Indices</CardTitle>
                 <CardDescription>Your custom portfolio indices</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-center py-12">
-                  <Save className="mx-auto h-12 w-12 text-slate-500 mb-4" />
-                  <p className="text-slate-400">Save functionality coming soon</p>
+                  <Save className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">Save functionality coming soon</p>
                 </div>
               </CardContent>
             </Card>

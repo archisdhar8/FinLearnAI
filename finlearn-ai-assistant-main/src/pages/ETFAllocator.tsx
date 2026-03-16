@@ -241,6 +241,21 @@ export default function ETFAllocator() {
       const data: BackendResult = await resp.json();
       setResult(data);
       setStep("results");
+      try {
+        sessionStorage.setItem(
+          "dashboard.lastEtfAllocation",
+          JSON.stringify({
+            profile: data.profile,
+            risk_score: data.risk_score,
+            allocation: data.allocation,
+            metrics: data.metrics,
+            etf_details: data.etf_details,
+            savedAt: new Date().toISOString(),
+          })
+        );
+      } catch {
+        // ignore
+      }
     } catch (e: any) {
       setError(e.message || "Failed to optimise portfolio");
     } finally {
@@ -271,6 +286,21 @@ export default function ETFAllocator() {
       const data: BackendResult = await resp.json();
       setResult(data);
       setStep("simulate");
+      try {
+        sessionStorage.setItem(
+          "dashboard.lastEtfAllocation",
+          JSON.stringify({
+            profile: data.profile,
+            risk_score: data.risk_score,
+            allocation: data.allocation,
+            metrics: data.metrics,
+            etf_details: data.etf_details,
+            savedAt: new Date().toISOString(),
+          })
+        );
+      } catch {
+        // ignore
+      }
     } catch (e: any) {
       setError(e.message || "Simulation failed");
     } finally {

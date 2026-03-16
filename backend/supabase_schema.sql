@@ -2,8 +2,12 @@
 -- Supabase Schema for FinLearn AI Learning System
 -- Run this in Supabase SQL Editor
 -- =====================================================
+-- NOTE: The backend (main.py) expects user_progress to have ONE ROW PER USER
+-- with a JSONB column "progress_data" (shape: { module_id: { completed_lessons: [], total_completed: N } }).
+-- If you need that layout, run backend/migrations/001_user_progress_jsonb.sql instead.
+-- The table below (one row per lesson) is an alternative design; the API uses JSONB.
 
--- User Progress Table
+-- User Progress Table (alternative: per-lesson rows; backend uses JSONB one-row-per-user — see migrations/001_user_progress_jsonb.sql)
 CREATE TABLE IF NOT EXISTS user_progress (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,

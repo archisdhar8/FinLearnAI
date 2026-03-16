@@ -2169,6 +2169,122 @@ async def get_community_users(limit: int = 50):
     return combined[:limit]
 
 
+class SendMessageRequest(BaseModel):
+    sender_id: str
+    receiver_id: str
+    body: str
+
+
+@app.post("/api/messages")
+async def send_message(req: SendMessageRequest):
+    """Send a direct message. Body should be non-empty and reasonable length."""
+    if not (req.body and isinstance(req.body, str)):
+        raise HTTPException(status_code=400, detail="Message body required")
+    body = (req.body or "").strip()[:2000]
+    if not body:
+        raise HTTPException(status_code=400, detail="Message body required")
+    supabase = get_supabase()
+    if not supabase:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    try:
+        row = {
+            "sender_id": req.sender_id,
+            "receiver_id": req.receiver_id,
+            "body": body,
+        }
+        result = supabase.table("direct_messages").insert(row).execute()
+        return {"success": True, "data": result.data}
+    except Exception as e:
+        print(f"[Messages Error] {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/messages")
+async def get_messages(user_id: str, with_user: str):
+    """Get messages between user_id and with_user, ordered by created_at."""
+    supabase = get_supabase()
+    if not supabase:
+        return []
+    try:
+        uid = str(user_id).strip()
+        wid = str(with_user).strip()
+        # Messages where (sender=user_id and receiver=with_user) or (sender=with_user and receiver=user_id)
+        sent = supabase.table("direct_messages").select("*").eq("sender_id", uid).eq("receiver_id", wid).order("created_at").execute()
+        received = supabase.table("direct_messages").select("*").eq("sender_id", wid).eq("receiver_id", uid).order("created_at").execute()
+        combined = (sent.data or []) + (received.data or [])
+        combined.sort(key=lambda x: x.get("created_at", ""))
+        return combined
+    except Exception as e:
+        print(f"[Messages Error] {e}")
+        return []
+
+
+# Seed user id -> display name for conversation list (real users come from user_profiles)
+SEED_USERNAMES = {u["id"]: u["username"] for u in SEED_USERS}
+
+
+def _display_name_for_user_id(supabase_client, user_id: str) -> str:
+    """Resolve display name for user_id (other person in chat). Seed users first, then user_profiles."""
+    name = SEED_USERNAMES.get(user_id)
+    if name is not None:
+        return name
+    if supabase_client:
+        try:
+            prof = supabase_client.table("user_profiles").select("display_name").eq("user_id", user_id).limit(1).execute()
+            if prof.data and len(prof.data) > 0:
+                return (prof.data[0].get("display_name")) or f"User {user_id[:8]}"
+        except Exception:
+            pass
+    return f"User {user_id[:8]}"
+
+
+@app.get("/api/conversations")
+async def get_conversations(user_id: str):
+    """List conversations for user_id: other user, last message, last_at. Always resolve display_name for the OTHER user."""
+    supabase = get_supabase()
+    if not supabase:
+        return []
+    try:
+        uid = str(user_id).strip()
+        sent = supabase.table("direct_messages").select("id, sender_id, receiver_id, body, created_at").eq("sender_id", uid).execute()
+        received = supabase.table("direct_messages").select("id, sender_id, receiver_id, body, created_at").eq("receiver_id", uid).execute()
+        all_msgs = (sent.data or []) + (received.data or [])
+        # Group by other user id (never include self). Normalize to string so UUID vs str doesn't break comparison.
+        by_other: dict = {}
+        for m in all_msgs:
+            sid = str(m.get("sender_id") or "")
+            rid = str(m.get("receiver_id") or "")
+            other = rid if sid == uid else sid  # I am sender -> other is receiver; I am receiver -> other is sender
+            if not other or other == uid:
+                continue  # skip message-to-self or bad data
+            existing = by_other.get(other, {})
+            if not existing or (m.get("created_at") or "") > (existing.get("last_at") or ""):
+                by_other[other] = {"last_body": (m.get("body") or "")[:80], "last_at": m.get("created_at")}
+        # Resolve display names for the OTHER user only
+        out = []
+        for other_id, info in by_other.items():
+            display_name = _display_name_for_user_id(supabase, other_id)
+            out.append({
+                "other_user_id": other_id,
+                "display_name": display_name,
+                "last_message": info.get("last_body", ""),
+                "last_at": info.get("last_at", ""),
+            })
+        out.sort(key=lambda x: x.get("last_at") or "", reverse=True)
+        return out
+    except Exception as e:
+        print(f"[Conversations Error] {e}")
+        return []
+
+
+@app.get("/api/users/{user_id}/display-name")
+async def get_user_display_name(user_id: str):
+    """Return display name for the given user (for chat header — always the other person)."""
+    supabase = get_supabase()
+    name = _display_name_for_user_id(supabase, user_id)
+    return {"user_id": user_id, "display_name": name}
+
+
 @app.get("/api/user-stats/{user_id}")
 async def get_user_stats(user_id: str):
     """Get detailed stats for a specific user."""
