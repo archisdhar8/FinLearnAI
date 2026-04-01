@@ -2122,9 +2122,12 @@ async def get_community_users(limit: int = 50):
     
     # Start with seed users
     combined = [dict(u) for u in SEED_USERS]
+    real_count = 0
     
-    try:
-        if supabase:
+    if not supabase:
+        print("[Users] Supabase not configured — returning seed users only. Set SUPABASE_URL and SUPABASE_KEY in backend/.env on the server.")
+    else:
+        try:
             profiles = supabase.table("user_profiles").select("*").limit(limit).execute()
             lesson_scores = supabase.table("lesson_quiz_scores").select("*").execute()
             module_scores = supabase.table("module_quiz_scores").select("*").execute()
@@ -2161,8 +2164,12 @@ async def get_community_users(limit: int = 50):
                     "last_activity": "Learning on FinLearn AI",
                     "is_real": True,
                 })
-    except Exception as e:
-        print(f"[Users Error] {e}")
+                real_count += 1
+            print(f"[Users] {len(SEED_USERS)} seed + {real_count} real = {len(combined)} users")
+        except Exception as e:
+            print(f"[Users Error] Supabase failed — real users not loaded: {e}")
+            import traceback
+            traceback.print_exc()
     
     # Sort by score descending
     combined.sort(key=lambda x: x.get("total_score", 0), reverse=True)
@@ -2739,6 +2746,18 @@ async def optimize_etf_allocation_endpoint(request: ETFAllocationRequest):
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# =============================================================================
+# Learning Personalization Sub-Router
+# =============================================================================
+
+try:
+    from decision_quality.personalization.api.routes import personalization_router
+    app.include_router(personalization_router, prefix="/api/personalization")
+    print("[Personalization] Router mounted at /api/personalization")
+except Exception as _perso_err:
+    print(f"[Personalization] Router not mounted: {_perso_err}")
 
 
 # =============================================================================

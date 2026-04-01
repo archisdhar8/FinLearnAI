@@ -89,20 +89,22 @@ pip install -r backend/requirements.txt
 pip install gunicorn uvicorn[standard]
 ```
 
-### Step 4: Create Environment File
+### Step 4: Create Environment File (required for Community + Messages)
 ```bash
 nano backend/.env
 ```
 
-Add your keys:
+Add your keys (use the **same** Supabase project as your frontend):
 ```
 GEMINI_API_KEY=your_gemini_key
 POLYGON_API_KEY=your_polygon_key
-SUPABASE_URL=https://drmuemzsoeehmxthzpav.supabase.co
-SUPABASE_KEY=your_supabase_key
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_KEY=your_supabase_service_role_key
 LLM_PROVIDER=gemini
 GEMINI_MODEL=models/gemini-flash-latest
 ```
+
+**Important:** Without `SUPABASE_URL` and `SUPABASE_KEY`, the Community page will only show seed users (no real people to message). Use your Supabase project URL and the **service_role** key (Project Settings → API) so the backend can read `user_profiles` and `direct_messages`. After editing `.env`, run `sudo systemctl restart finlearn`.
 
 ### Step 5: Test Backend
 ```bash
@@ -228,6 +230,28 @@ sudo systemctl restart finlearn
 ---
 
 ## Troubleshooting
+
+### Real users missing on Community / can't message anyone
+The backend needs Supabase to show real learners and enable DMs.
+
+1. On EC2, ensure `backend/.env` has **real** values (not placeholders):
+   - `SUPABASE_URL=https://your-project.supabase.co`
+   - `SUPABASE_KEY=` your **service_role** key from Supabase (Project Settings → API)
+2. Make the service load `.env`:
+   ```bash
+   sudo nano /etc/systemd/system/finlearn.service
+   ```
+   Under `[Service]`, add this line (after `WorkingDirectory=...`):
+   ```ini
+   EnvironmentFile=/home/ubuntu/FinLearnAI/backend/.env
+   ```
+3. Restart and check logs:
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl restart finlearn
+   sudo journalctl -u finlearn -n 30
+   ```
+   You should see `[Supabase] Connected to ...` and `[Users] 12 seed + N real = ...`. If you see "Supabase not configured" or "0 real", fix `.env` and restart again.
 
 ### Backend not responding
 ```bash

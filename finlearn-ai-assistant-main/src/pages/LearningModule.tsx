@@ -11,6 +11,7 @@ import {
   DiversificationDemo 
 } from "@/components/InteractiveElements";
 import { MODULES } from "@/data/moduleContent";
+import { personalizationApi, lessonTopic, toBackendLessonId } from "@/lib/personalizationApi";
 import {
   ArrowLeft,
   ArrowRight,
@@ -49,7 +50,6 @@ export default function LearningModule() {
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [quizCompleted, setQuizCompleted] = useState(false);
   const [lessonQuizScores, setLessonQuizScores] = useState<Record<string, number>>({});
 
   const module = moduleId ? MODULES[moduleId] : null;
@@ -112,7 +112,7 @@ export default function LearningModule() {
 
   const saveProgress = async (lessonId: string) => {
     if (!userId || !moduleId) return;
-    
+
     const { API_URL: progressUrl } = await import("@/lib/api");
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -136,6 +136,16 @@ export default function LearningModule() {
     } catch (err) {
       console.error('Failed to save progress:', err);
     }
+
+    // Fire-and-forget: send lesson_completed event to personalization API.
+    // Use the backend lesson ID so the eligibility filter works correctly.
+    personalizationApi.ingestEvent({
+      user_id: userId,
+      event_type: "lesson_completed",
+      lesson_id: toBackendLessonId(lessonId),
+      module_id: moduleId,
+      topic: lessonTopic(lessonId),
+    });
   };
 
   const submitQuizScore = async (score: number, total: number, isFinal: boolean = false) => {
@@ -173,6 +183,18 @@ export default function LearningModule() {
     } catch (err) {
       console.error('Failed to submit quiz:', err);
     }
+
+    // Fire-and-forget: send quiz_submitted event to personalization API
+    const quizLessonId = isFinal ? undefined : currentLesson?.id;
+    personalizationApi.ingestEvent({
+      user_id: userId,
+      event_type: "quiz_submitted",
+      lesson_id: quizLessonId,
+      module_id: moduleId ?? undefined,
+      topic: quizLessonId ? lessonTopic(quizLessonId) : undefined,
+      score: total > 0 ? score / total : 0,
+      attempt_num: 1,
+    });
   };
 
   if (loading) {
@@ -206,25 +228,22 @@ export default function LearningModule() {
       await saveProgress(currentLesson.id);
     }
     
-    // Show quiz if lesson has one
-    if (currentLesson.quiz && currentLesson.quiz.length > 0 && !quizCompleted) {
+    // Show quiz if lesson has one and it hasn't been completed yet (Supabase-backed)
+    if (currentLesson.quiz && currentLesson.quiz.length > 0 && !lessonQuizScores[currentLesson.id]) {
       setShowQuiz(true);
     } else if (currentLessonIndex < module.lessons.length - 1) {
       setCurrentLessonIndex(currentLessonIndex + 1);
-      setQuizCompleted(false);
     }
   };
 
   const handleQuizComplete = async (score: number, total: number) => {
     await submitQuizScore(score, total, false);
-    setQuizCompleted(true);
     setShowQuiz(false);
-    
+
     // Move to next lesson after quiz
     if (currentLessonIndex < module.lessons.length - 1) {
       setTimeout(() => {
         setCurrentLessonIndex(currentLessonIndex + 1);
-        setQuizCompleted(false);
       }, 1500);
     }
   };
@@ -403,7 +422,6 @@ export default function LearningModule() {
                   onClick={() => {
                     setCurrentLessonIndex(index);
                     setShowQuiz(false);
-                    setQuizCompleted(false);
                   }}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-colors ${
                     index === currentLessonIndex
@@ -537,7 +555,6 @@ export default function LearningModule() {
                 <button
                   onClick={() => {
                     setCurrentLessonIndex(Math.max(0, currentLessonIndex - 1));
-                    setQuizCompleted(false);
                   }}
                   disabled={currentLessonIndex === 0}
                   className="flex items-center gap-2 px-4 py-2 bg-muted rounded-lg text-sm hover:bg-muted/80 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -545,10 +562,10 @@ export default function LearningModule() {
                   <ArrowLeft className="w-4 h-4" />
                   Previous
                 </button>
-                
+
                 <div className="flex gap-3">
-                  {/* Show Take Quiz button if lesson has quiz */}
-                  {currentLesson.quiz && currentLesson.quiz.length > 0 && !quizCompleted && (
+                  {/* Show Take Quiz button only if quiz not yet completed (Supabase-backed) */}
+                  {currentLesson.quiz && currentLesson.quiz.length > 0 && !lessonQuizScores[currentLesson.id] && (
                     <button
                       onClick={() => setShowQuiz(true)}
                       className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm hover:opacity-90"

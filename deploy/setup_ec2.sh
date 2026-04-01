@@ -52,7 +52,7 @@ EOF
     echo "   Run: nano backend/.env"
 fi
 
-# Create systemd service
+# Create systemd service (loads backend/.env so Supabase + API keys work for Community/Messages)
 echo "[7/7] Creating systemd service..."
 sudo tee /etc/systemd/system/finlearn.service > /dev/null << EOF
 [Unit]
@@ -62,6 +62,7 @@ After=network.target
 [Service]
 User=ubuntu
 WorkingDirectory=/home/ubuntu/FinLearnAI/backend
+EnvironmentFile=/home/ubuntu/FinLearnAI/backend/.env
 Environment="PATH=/home/ubuntu/FinLearnAI/venv/bin"
 ExecStart=/home/ubuntu/FinLearnAI/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000
 Restart=always

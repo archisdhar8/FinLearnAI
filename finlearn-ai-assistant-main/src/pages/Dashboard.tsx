@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { HeroSection } from "@/components/HeroSection";
 import { LessonGrid } from "@/components/LessonGrid";
 import { ChatPanel } from "@/components/ChatPanel";
+import { PersonalizationCard } from "@/components/PersonalizationCard";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LogOut, TrendingUp, BarChart3, Eye, LineChart, Brain, Trophy, Users, PieChart, Zap, Target, Info, ArrowRight, Wallet, Download, MessageCircle } from "lucide-react";
@@ -60,6 +61,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [userEmail, setUserEmail] = useState("");
+  const [userId, setUserId] = useState<string | null>(null);
   const [selectedGoal, setSelectedGoal] = useState<string | null>(() => {
     try {
       return sessionStorage.getItem("dashboard.selectedGoal");
@@ -92,6 +94,7 @@ const Dashboard = () => {
         navigate("/");
       } else {
         setUserEmail(session.user.email || "");
+        setUserId(session.user.id);
       }
     });
 
@@ -100,6 +103,7 @@ const Dashboard = () => {
         navigate("/");
       } else {
         setUserEmail(session.user.email || "");
+        setUserId(session.user.id);
       }
     });
 
@@ -165,6 +169,9 @@ const Dashboard = () => {
 
         <div className="max-w-6xl mx-auto px-6 lg:px-12 pb-16">
           <HeroSection />
+
+          {/* Personalized learning progress + next-step recommendations */}
+          <PersonalizationCard userId={userId} />
 
           {/* Learning Modules Section */}
           <LessonGrid />
