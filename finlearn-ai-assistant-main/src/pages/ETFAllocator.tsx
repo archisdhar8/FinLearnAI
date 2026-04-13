@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { apiCall, API_URL } from "@/lib/api";
@@ -165,10 +165,13 @@ interface BackendResult {
   };
 }
 
+const PATH_PRESET_KEY = "dashboard.pathPreset";
+
 // ── Component ───────────────────────────────────────────────────────────────
 
 export default function ETFAllocator() {
   const navigate = useNavigate();
+  const pathPresetConsumed = useRef(false);
 
   // Steps: quiz → picking themes → results → simulate
   const [step, setStep] = useState<"quiz" | "themes" | "results" | "simulate">("quiz");
@@ -194,6 +197,31 @@ export default function ETFAllocator() {
       if (!session) navigate("/");
     });
   }, [navigate]);
+
+  // Apply goal-based preset from dashboard "Your investing path" → Go (quiz horizon + Monte Carlo years)
+  useEffect(() => {
+    if (pathPresetConsumed.current) return;
+    try {
+      const raw = sessionStorage.getItem(PATH_PRESET_KEY);
+      if (!raw) {
+        pathPresetConsumed.current = true;
+        return;
+      }
+      const p = JSON.parse(raw) as { simulatorYears?: number; etfTimeHorizon?: number };
+      if (p.etfTimeHorizon != null) {
+        setQuizAnswers({ time_horizon_years: p.etfTimeHorizon });
+        setCurrentQuestion(1);
+      }
+      if (p.simulatorYears != null) {
+        const y = Math.min(40, Math.max(1, Math.round(Number(p.simulatorYears))));
+        setSimYears(y);
+      }
+      pathPresetConsumed.current = true;
+      sessionStorage.removeItem(PATH_PRESET_KEY);
+    } catch {
+      pathPresetConsumed.current = true;
+    }
+  }, []);
 
   // ── Quiz handlers ───────────────────────────────────────────────────────
 

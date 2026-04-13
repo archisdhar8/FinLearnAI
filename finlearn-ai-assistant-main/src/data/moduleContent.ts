@@ -71,7 +71,7 @@ Your money works while you sleep.
 
 ---
 
-> 💡 **QUICK STAT:** If you invested $1,000 in the S&P 500 in 2014, you'd have ~$3,500 today. That's doing nothing but waiting.
+> **Quick stat:** A broad US index investment held since 2014 would have seen strong growth through multiple cycles—illustrating how time in the market can reward patience (past performance does not guarantee future results).
 
 ---
 
@@ -91,7 +91,7 @@ You didn't lose the money. You lost what the money can buy.
 
 ---
 
-> 📊 **TRY IT:** Use the Inflation Calculator below. Enter $10,000 and see what it's worth in 20 years if you don't invest.
+> **Try it:** Use the Inflation Calculator below. Enter $10,000 and see how purchasing power can erode over 20 years at a typical inflation assumption.
 
 ---
 
@@ -384,7 +384,7 @@ See it? Each year you earn more because you're earning on your earnings. This sn
 
 ---
 
-> 📊 **TRY IT NOW:** Use the Compound Calculator below. Put in $10,000, 7% return, 30 years. That's ~$76,000. Now try 40 years. That's ~$150,000. Ten extra years = DOUBLE the money.
+> **Try it now:** Use the Compound Calculator below with $10,000 at 7%—compare 30 years vs. 40 years. Small changes in time can produce large differences in ending balance because growth builds on growth.
 
 ---
 
@@ -859,45 +859,61 @@ That's it. You can do this.
         id: "what_moves_markets",
         title: "What Moves Markets",
         content: `
-Markets don't move randomly. They respond to a mix of economic forces, news, and human behavior. Understanding these drivers helps you interpret market movements without overreacting.
+> **In this lesson:** You will learn the main **drivers** of price moves—macro data, company profits, news, and psychology—and how to think about them without chasing every headline.
+
+Markets are not roulette wheels: prices reflect expectations about the future, discounted to today. They can swing sharply in the short run even when the underlying economy or businesses change slowly. Understanding the categories below helps you stay calm and context-aware.
 
 ---
 
 ## Economic Indicators
 
-**GDP (Gross Domestic Product)**: Measures the total value of goods and services produced. Growing GDP usually means a healthy economy.
+These statistics describe the health of the economy. Investors watch them because they shape corporate profits and central-bank policy.
 
-**Unemployment Rate**: High unemployment signals economic weakness. Low unemployment suggests strength but can lead to inflation.
+| Indicator | What it measures | Why markets care |
+|-------------|------------------|------------------|
+| **GDP** | Total goods and services produced | Growth usually supports earnings; contraction raises recession fears |
+| **Unemployment** | Share of workforce without jobs | Very high = weakness; very low can feed wage inflation |
+| **Inflation** | Pace of price increases | High inflation often leads to higher rates, which can hurt stocks and bonds |
+| **Policy rates** | Cost of borrowing (e.g. Fed funds) | Higher rates raise discount rates and borrowing costs for companies |
 
-**Inflation**: Rising prices erode purchasing power. Central banks raise interest rates to combat inflation, which affects stock and bond prices.
+**GDP (Gross Domestic Product)** summarizes economic output. Sustained GDP growth generally supports corporate revenue over time; sharp slowdowns can pressure risk assets.
 
-**Interest Rates**: When the Federal Reserve raises rates, borrowing becomes more expensive. This can slow economic growth and often causes stock prices to fall.
+**Interest rates**: When the Federal Reserve *tightens* (raises rates), loans and mortgages get more expensive, which can cool spending and weigh on stock valuations. When it *eases*, the opposite often occurs—though the path is never linear.
 
 ---
 
 ## Corporate Earnings
 
-At the end of the day, stock prices reflect what companies earn. When companies report strong earnings, stock prices tend to rise. When earnings disappoint, prices fall.
+Over long horizons, **profits** are a core link between the real economy and stock prices: owners of shares participate (via dividends and reinvestment) when businesses earn more over time.
 
-**Earnings Season**: Four times a year, companies report quarterly results. These reports can cause significant price swings.
+| Concept | Meaning |
+|---------|---------|
+| **Earnings season** | Roughly quarterly windows when many firms report results—often higher volatility |
+| **Forward guidance** | Management’s outlook; can move prices more than past numbers alone |
 
-**Forward Guidance**: What companies say about the future often matters more than past results.
+**Earnings Season**: Four times a year, companies report quarterly results. Surprises vs. expectations can move individual names and sometimes whole sectors.
+
+**Forward Guidance**: What companies say about demand, margins, and capex next quarter or year often matters as much as last quarter’s print.
 
 ---
 
 ## News and Events
 
-- **Geopolitical events**: Wars, elections, trade disputes
-- **Industry news**: Regulatory changes, technological breakthroughs
-- **Company-specific news**: Product launches, scandals, leadership changes
+- **Geopolitical events**: Wars, elections, sanctions, trade policy—can shift risk appetite and sector fortunes.
+- **Industry news**: Regulation (e.g. healthcare, banks), new technology (e.g. AI, energy transition).
+- **Company-specific news**: Earnings, product launches, lawsuits, leadership changes.
+
+Not every headline deserves a portfolio change. Ask: *Does this alter long-term earnings power for the things I own, or is it short-term noise?*
 
 ---
 
 ## Market Sentiment
 
-Sometimes markets move based on mood rather than facts. Fear and greed drive short-term price swings that may not reflect underlying value.
+**Sentiment** is the collective mood of investors—optimism, fear, greed, apathy. It can push prices away from “fair value” for months or years (bubbles and panics).
 
-**Key insight**: In the short term, markets are voting machines (popularity contests). In the long term, they're weighing machines (measuring actual value).
+> **Benjamin Graham’s line (often quoted by Buffett):** In the short run the market is a *voting machine*; in the long run it is a *weighing machine*. Short-term moves are driven by who shows up to buy or sell; long-term results tie more closely to the cash flows businesses actually deliver.
+
+Use sentiment as context, not as a timing gadget. Your plan—allocation, contributions, rebalancing—should not depend on guessing the next sentiment swing.
         `,
         quiz: [
           {

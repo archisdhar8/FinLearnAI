@@ -36,6 +36,29 @@ function StepRow({ step, label, desc, onGo, icon }: { step: number; label: strin
 }
 
 const ETF_ALLOCATION_KEY = "dashboard.lastEtfAllocation";
+/** Written before navigating to Simulator / ETF Allocator from "Your investing path" */
+const PATH_PRESET_KEY = "dashboard.pathPreset";
+
+type PathPreset = { simulatorYears?: number; etfTimeHorizon?: number };
+
+function applyPathPreset(goal: string | null) {
+  const map: Record<string, PathPreset> = {
+    house: { simulatorYears: 5, etfTimeHorizon: 4 },
+    retirement: { simulatorYears: 25, etfTimeHorizon: 25 },
+    wealth: { simulatorYears: 15, etfTimeHorizon: 15 },
+    learning: { simulatorYears: 10, etfTimeHorizon: 7 },
+  };
+  try {
+    const preset = goal && map[goal] ? map[goal] : null;
+    if (preset) {
+      sessionStorage.setItem(PATH_PRESET_KEY, JSON.stringify(preset));
+    } else {
+      sessionStorage.removeItem(PATH_PRESET_KEY);
+    }
+  } catch {
+    // ignore
+  }
+}
 
 interface SavedEtfAllocation {
   profile: string;
@@ -175,143 +198,15 @@ const Dashboard = () => {
 
           {/* Learning Modules Section */}
           <LessonGrid />
-          
-          {/* How to use FinLearn after modules — main goal path */}
-          <Alert className="mb-6 mt-8 border-primary/30 bg-primary/5">
-            <Info className="h-4 w-4 text-primary" />
-            <AlertTitle className="text-base">How to turn learning into action</AlertTitle>
-            <AlertDescription className="mt-1 text-sm text-muted-foreground">
-              After the modules, use the tools in order:{" "}
-              <strong className="text-foreground">Portfolio Simulator</strong> → see how much you need to save and for how long;{" "}
-              <strong className="text-foreground">Smart ETF Allocator</strong> → get a personalised portfolio based on your risk and goals;{" "}
-              then track your plan with a <strong className="text-foreground">virtual portfolio</strong> (no real money). Pick a goal below to see your path.
-            </AlertDescription>
-          </Alert>
 
-          {/* Your investing path — goals-based flow (below Learning Modules) */}
-          <section className="py-8">
-            <h2 className="font-display text-2xl font-bold mb-2 flex items-center gap-2">
-              <Target className="w-6 h-6 text-primary" />
-              Your investing path
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              Choose a goal to see which tools to use and in what order. This keeps you focused on one main outcome.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              {[
-                { id: "house", label: "Save for a house", years: "~5 years", horizon: 5 },
-                { id: "retirement", label: "Retirement", years: "15–30 years", horizon: 20 },
-                { id: "wealth", label: "Build long-term wealth", years: "10+ years", horizon: 15 },
-                { id: "learning", label: "Just learning", years: "Exploring", horizon: null },
-              ].map((goal) => (
-                <Card
-                  key={goal.id}
-                  className={`cursor-pointer transition-all hover:border-primary/50 hover:shadow-md ${selectedGoal === goal.id ? "border-primary/50 ring-1 ring-primary/20" : ""}`}
-                  onClick={() => setSelectedGoal(goal.id)}
-                >
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">{goal.label}</CardTitle>
-                    <CardDescription>{goal.years}</CardDescription>
-                  </CardHeader>
-                </Card>
-              ))}
-            </div>
-            {selectedGoal && (
-              <Card className="border-primary/20 bg-muted/30">
-                <CardHeader>
-                  <CardTitle className="text-lg">Use these tools in order</CardTitle>
-                  <CardDescription>
-                    {selectedGoal === "house" && "Short horizon: focus on Simulator + ETF Allocator, then track with a virtual portfolio."}
-                    {selectedGoal === "retirement" && "Long horizon: Simulator for savings targets, ETF Allocator for allocation, Monte Carlo for outcome ranges."}
-                    {selectedGoal === "wealth" && "Simulator to set contributions, ETF Allocator for a risk-matched portfolio, then monitor with a virtual portfolio."}
-                    {selectedGoal === "learning" && "Start with the Simulator to see compound growth, then try the ETF Allocator to see how risk affects your portfolio."}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <StepRow step={1} label="Portfolio Simulator" desc="Set your horizon and monthly contribution; see how much you could have." onGo={() => navigate("/simulator")} />
-                  <StepRow step={2} label="Smart ETF Allocator" desc="Answer the quiz; get a personalised ETF mix and optional Monte Carlo outcomes." onGo={() => navigate("/etf-allocator")} />
-                  {/* Step 3: show saved portfolio from ETF Allocator or "coming soon" */}
-                  <div className="flex items-start gap-3 rounded-lg border border-border/50 bg-background/50 p-3">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/20 text-sm font-medium text-primary">
-                      3
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      {savedAllocation ? (
-                        <>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-medium text-foreground">Your optimized portfolio</span>
-                            <span className="text-xs text-muted-foreground">
-                              {savedAllocation.profile} · {savedAllocation.metrics.num_holdings} ETFs · E[R] {savedAllocation.metrics.expected_return}%
-                            </span>
-                          </div>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            From Smart ETF Allocator. Download to keep or share. Virtual tracking coming soon.
-                          </p>
-                          <div className="flex flex-wrap gap-2 mt-3">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const blob = new Blob([JSON.stringify(savedAllocation, null, 2)], { type: "application/json" });
-                                const url = URL.createObjectURL(blob);
-                                const a = document.createElement("a");
-                                a.href = url;
-                                a.download = `finlearn-etf-allocation-${savedAllocation.savedAt.slice(0, 10)}.json`;
-                                a.click();
-                                URL.revokeObjectURL(url);
-                              }}
-                              className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md bg-primary/15 text-primary hover:bg-primary/25"
-                            >
-                              <Download className="w-3.5 h-3.5" />
-                              Download JSON
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const headers = "ETF,Weight %,Name\n";
-                                const rows = Object.entries(savedAllocation.allocation)
-                                  .map(([etf, w]) => `${etf},${w},${(savedAllocation.etf_details && savedAllocation.etf_details[etf]?.name) || etf}`)
-                                  .join("\n");
-                                const blob = new Blob([headers + rows], { type: "text/csv" });
-                                const url = URL.createObjectURL(blob);
-                                const a = document.createElement("a");
-                                a.href = url;
-                                a.download = `finlearn-etf-allocation-${savedAllocation.savedAt.slice(0, 10)}.csv`;
-                                a.click();
-                                URL.revokeObjectURL(url);
-                              }}
-                              className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md bg-muted text-muted-foreground hover:bg-muted/80"
-                            >
-                              <Download className="w-3.5 h-3.5" />
-                              Download CSV
-                            </button>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-medium text-foreground">Virtual portfolio (coming soon)</span>
-                            <Wallet className="w-4 h-4 text-muted-foreground" />
-                          </div>
-                          <p className="text-sm text-muted-foreground mt-0.5">
-                            Track your chosen allocation with real prices—no real money. Run the ETF Allocator first to see your portfolio here.
-                          </p>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </section>
-          
-          {/* AI Tools Section - Now below */}
-          <section className="py-8">
+          {/* AI Tools — above Your investing path */}
+          <section className="py-8 mt-8">
             <h2 className="font-display text-2xl font-bold mb-2">AI Tools</h2>
             <p className="text-muted-foreground mb-2">Powerful analysis tools powered by machine learning.</p>
             <p className="text-sm text-muted-foreground mb-6">
               For your main goal (e.g. retirement or a house), start with <strong>Simulator</strong> and <strong>ETF Allocator</strong> (first row). Use <strong>Stock Screener</strong> and <strong>AI Stock Discovery</strong> when you want to explore individual stocks or build a custom index.
             </p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Row 1: Simulator, ETF Allocator */}
               <button
@@ -406,6 +301,154 @@ const Dashboard = () => {
                 </p>
               </button>
             </div>
+          </section>
+
+          {/* How to use FinLearn after modules — below AI Tools, above goal cards */}
+          <Alert className="mb-6 border-primary/30 bg-primary/5 [&>svg]:hidden pl-4">
+            <div className="space-y-2">
+              <AlertTitle className="text-base">How to turn learning into action</AlertTitle>
+              <div className="flex gap-3 items-start">
+                <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" aria-hidden />
+                <AlertDescription className="text-sm text-muted-foreground mt-0">
+                  After the modules, use the tools in order:{" "}
+                  <strong className="text-foreground">Portfolio Simulator</strong> → see how much you need to save and for how long;{" "}
+                  <strong className="text-foreground">Smart ETF Allocator</strong> → get a personalised portfolio based on your risk and goals;{" "}
+                  then track your plan with a <strong className="text-foreground">virtual portfolio</strong> (no real money). Pick a goal below to see your path.
+                </AlertDescription>
+              </div>
+            </div>
+          </Alert>
+
+          {/* Your investing path — goals-based flow */}
+          <section className="py-8 pt-0">
+            <h2 className="font-display text-2xl font-bold mb-2 flex items-center gap-2">
+              <Target className="w-6 h-6 text-primary" />
+              Your investing path
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              Choose a goal to see which tools to use and in what order. This keeps you focused on one main outcome.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              {[
+                { id: "house", label: "Save for a house", years: "~5 years", horizon: 5 },
+                { id: "retirement", label: "Retirement", years: "15–30 years", horizon: 20 },
+                { id: "wealth", label: "Build long-term wealth", years: "10+ years", horizon: 15 },
+                { id: "learning", label: "Just learning", years: "Exploring", horizon: null },
+              ].map((goal) => (
+                <Card
+                  key={goal.id}
+                  className={`cursor-pointer transition-all hover:border-primary/50 hover:shadow-md ${selectedGoal === goal.id ? "border-primary/50 ring-1 ring-primary/20" : ""}`}
+                  onClick={() => setSelectedGoal(goal.id)}
+                >
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">{goal.label}</CardTitle>
+                    <CardDescription>{goal.years}</CardDescription>
+                  </CardHeader>
+                </Card>
+              ))}
+            </div>
+            {selectedGoal && (
+              <Card className="border-primary/20 bg-muted/30">
+                <CardHeader>
+                  <CardTitle className="text-lg">Use these tools in order</CardTitle>
+                  <CardDescription>
+                    {selectedGoal === "house" && "Short horizon: focus on Simulator + ETF Allocator, then track with a virtual portfolio."}
+                    {selectedGoal === "retirement" && "Long horizon: Simulator for savings targets, ETF Allocator for allocation, Monte Carlo for outcome ranges."}
+                    {selectedGoal === "wealth" && "Simulator to set contributions, ETF Allocator for a risk-matched portfolio, then monitor with a virtual portfolio."}
+                    {selectedGoal === "learning" && "Start with the Simulator to see compound growth, then try the ETF Allocator to see how risk affects your portfolio."}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <StepRow
+                    step={1}
+                    label="Portfolio Simulator"
+                    desc="Set your horizon and monthly contribution; see how much you could have."
+                    onGo={() => {
+                      applyPathPreset(selectedGoal);
+                      navigate("/simulator");
+                    }}
+                  />
+                  <StepRow
+                    step={2}
+                    label="Smart ETF Allocator"
+                    desc="Answer the quiz; get a personalised ETF mix and optional Monte Carlo outcomes."
+                    onGo={() => {
+                      applyPathPreset(selectedGoal);
+                      navigate("/etf-allocator");
+                    }}
+                  />
+                  {/* Step 3: show saved portfolio from ETF Allocator or "coming soon" */}
+                  <div className="flex items-start gap-3 rounded-lg border border-border/50 bg-background/50 p-3">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/20 text-sm font-medium text-primary">
+                      3
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      {savedAllocation ? (
+                        <>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-medium text-foreground">Your optimized portfolio</span>
+                            <span className="text-xs text-muted-foreground">
+                              {savedAllocation.profile} · {savedAllocation.metrics.num_holdings} ETFs · E[R] {savedAllocation.metrics.expected_return}%
+                            </span>
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            From Smart ETF Allocator. Download to keep or share. Virtual tracking coming soon.
+                          </p>
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const blob = new Blob([JSON.stringify(savedAllocation, null, 2)], { type: "application/json" });
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement("a");
+                                a.href = url;
+                                a.download = `finlearn-etf-allocation-${savedAllocation.savedAt.slice(0, 10)}.json`;
+                                a.click();
+                                URL.revokeObjectURL(url);
+                              }}
+                              className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md bg-primary/15 text-primary hover:bg-primary/25"
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                              Download JSON
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const headers = "ETF,Weight %,Name\n";
+                                const rows = Object.entries(savedAllocation.allocation)
+                                  .map(([etf, w]) => `${etf},${w},${(savedAllocation.etf_details && savedAllocation.etf_details[etf]?.name) || etf}`)
+                                  .join("\n");
+                                const blob = new Blob([headers + rows], { type: "text/csv" });
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement("a");
+                                a.href = url;
+                                a.download = `finlearn-etf-allocation-${savedAllocation.savedAt.slice(0, 10)}.csv`;
+                                a.click();
+                                URL.revokeObjectURL(url);
+                              }}
+                              className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md bg-muted text-muted-foreground hover:bg-muted/80"
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                              Download CSV
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-medium text-foreground">Virtual portfolio (coming soon)</span>
+                            <Wallet className="w-4 h-4 text-muted-foreground" />
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-0.5">
+                            Track your chosen allocation with real prices—no real money. Run the ETF Allocator first to see your portfolio here.
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </section>
         </div>
       </div>

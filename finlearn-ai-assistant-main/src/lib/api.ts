@@ -1,9 +1,9 @@
 // API Configuration
-// DEV: localhost:8000
-// Production: VITE_API_URL (backend direct - required when backend is Tailscale/reachable from browser only)
-
+// DEV: talk directly to the local FastAPI server.
+// PROD: use same-origin "/api" so Vercel can proxy requests to the backend
+// without the browser hitting mixed-content errors.
 export const API_URL =
-  import.meta.env.DEV ? 'http://localhost:8000' : (import.meta.env.VITE_API_URL ?? '');
+  import.meta.env.DEV ? "http://localhost:8000" : "";
 
 // Helper function for API calls
 export async function apiCall<T>(

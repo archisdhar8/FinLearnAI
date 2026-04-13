@@ -11,6 +11,7 @@ import {
   DiversificationDemo 
 } from "@/components/InteractiveElements";
 import { MODULES } from "@/data/moduleContent";
+import { LessonContent } from "@/components/LessonContent";
 import { personalizationApi, lessonTopic, toBackendLessonId } from "@/lib/personalizationApi";
 import {
   ArrowLeft,
@@ -253,48 +254,6 @@ export default function LearningModule() {
     setShowLeaderboard(true);
   };
 
-  // Simple markdown renderer
-  const renderContent = (content: string) => {
-    return content.split("\n").map((line, i) => {
-      const trimmed = line.trim();
-      
-      if (trimmed.startsWith("## ")) {
-        return <h2 key={i} className="text-2xl font-bold mt-8 mb-4 text-foreground">{trimmed.replace("## ", "")}</h2>;
-      }
-      if (trimmed.startsWith("### ")) {
-        return <h3 key={i} className="text-xl font-semibold mt-6 mb-3 text-foreground">{trimmed.replace("### ", "")}</h3>;
-      }
-      if (trimmed.startsWith("---")) {
-        return <hr key={i} className="my-6 border-border" />;
-      }
-      if (trimmed.startsWith("- ")) {
-        return <li key={i} className="ml-6 text-muted-foreground list-disc">{renderInlineFormatting(trimmed.replace("- ", ""))}</li>;
-      }
-      if (trimmed.match(/^\d+\./)) {
-        return <li key={i} className="ml-6 text-muted-foreground list-decimal">{renderInlineFormatting(trimmed.replace(/^\d+\.\s*/, ""))}</li>;
-      }
-      if (trimmed) {
-        return (
-          <p key={i} className="text-muted-foreground leading-relaxed my-2">
-            {renderInlineFormatting(trimmed)}
-          </p>
-        );
-      }
-      return null;
-    });
-  };
-
-  const renderInlineFormatting = (text: string) => {
-    // Handle bold text
-    const parts = text.split(/(\*\*[^*]+\*\*)/g);
-    return parts.map((part, j) => {
-      if (part.startsWith("**") && part.endsWith("**")) {
-        return <strong key={j} className="text-foreground">{part.replace(/\*\*/g, "")}</strong>;
-      }
-      return part;
-    });
-  };
-
   // Final Quiz View
   if (showFinalQuiz) {
     return (
@@ -477,9 +436,7 @@ export default function LearningModule() {
                   )}
                 </div>
                 <h1 className="font-display text-3xl font-bold mb-6">{currentLesson.title}</h1>
-                <div className="prose prose-invert max-w-none">
-                  {renderContent(currentLesson.content)}
-                </div>
+                <LessonContent content={currentLesson.content} />
               </div>
 
               {/* Interactive Elements */}

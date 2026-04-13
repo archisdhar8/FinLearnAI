@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -20,8 +20,11 @@ interface SimulationResult {
   totalGrowth: number;
 }
 
+const PATH_PRESET_KEY = "dashboard.pathPreset";
+
 export default function Simulator() {
   const navigate = useNavigate();
+  const presetConsumed = useRef(false);
   const [initialInvestment, setInitialInvestment] = useState(10000);
   const [monthlyContribution, setMonthlyContribution] = useState(500);
   const [years, setYears] = useState(20);
@@ -35,6 +38,30 @@ export default function Simulator() {
       if (!session) navigate("/");
     });
   }, [navigate]);
+
+  // Apply goal-based preset from dashboard "Your investing path" → Go
+  useEffect(() => {
+    if (presetConsumed.current) return;
+    try {
+      const raw = sessionStorage.getItem(PATH_PRESET_KEY);
+      if (!raw) return;
+      const p = JSON.parse(raw) as { simulatorYears?: number; etfTimeHorizon?: number };
+      const next = { ...p };
+      if (p.simulatorYears != null) {
+        const y = Math.min(40, Math.max(1, Math.round(Number(p.simulatorYears))));
+        setYears(y);
+        delete next.simulatorYears;
+      }
+      presetConsumed.current = true;
+      if (Object.keys(next).length === 0) {
+        sessionStorage.removeItem(PATH_PRESET_KEY);
+      } else {
+        sessionStorage.setItem(PATH_PRESET_KEY, JSON.stringify(next));
+      }
+    } catch {
+      // invalid JSON — leave sessionStorage as-is for ETF page
+    }
+  }, []);
 
   const runSimulation = () => {
     setIsRunning(true);
